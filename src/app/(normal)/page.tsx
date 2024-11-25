@@ -1,4 +1,6 @@
+import Dashboard from "./dashboard/page";
+
 const Home: React.FC = () => {
-  return <div>Dashboard User</div>;
+  return <Dashboard />;
 };
 export default Home;

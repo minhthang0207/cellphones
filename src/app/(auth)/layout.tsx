@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Sarabun } from "next/font/google";
 import "../globals.css";
-import NormalLayoutWrapper from "@/components/organisms/LayoutWrapper/NormalLayoutWrapper";
 
 const sarabun = Sarabun({
   weight: ["400", "500"],
@@ -21,9 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={sarabun.className}>
-        <NormalLayoutWrapper>{children}</NormalLayoutWrapper>
-      </body>
+      <body className={sarabun.className}>{children}</body>
     </html>
   );
 }
