@@ -9,8 +9,8 @@ const sarabun = Sarabun({
 });
 
 export const metadata: Metadata = {
-  title: "CellphoneS",
-  description: "CellphoneS",
+  title: "Trang không tồn tại",
+  description: "Trang không tồn tại",
 };
 
 export default function RootLayout({

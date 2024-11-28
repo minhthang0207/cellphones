@@ -69,7 +69,11 @@ const Header: React.FC = () => {
         </div>
       </div>
       <div className="md:hidden flex items-center w-full px-3 py-2">
-        <Input placeholder="Tìm kiếm sản phẩm" icon={<CiSearch size={24} />} />
+        <Input
+          placeholder="Tìm kiếm sản phẩm"
+          className=""
+          icon={<CiSearch size={24} />}
+        />
       </div>
     </div>
   );

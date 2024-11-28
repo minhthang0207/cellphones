@@ -87,3 +87,30 @@ body {
 :root {
   --item-height: 150px; /* Chiều cao của mỗi mục */
 }
+
+@keyframes changeColor1 {
+  0% {
+    color: #dc2626;
+  }
+  100% {
+    color: #fbbf24;
+  }
+}
+
+/* Định nghĩa animation cho bóng đèn 2 */
+@keyframes changeColor2 {
+  0% {
+    color: #fbbf24;
+  }
+  100% {
+    color: #dc2626;
+  }
+}
+
+.bulb-1 {
+  animation: changeColor1 2s ease-in-out infinite;
+}
+
+.bulb-2 {
+  animation: changeColor2 2s ease-in-out infinite;
+}
