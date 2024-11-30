@@ -3,15 +3,6 @@ import { MdOutlineStar } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import Link from "next/link";
 
-interface Product {
-  img: string; // Đường dẫn đến hình ảnh sản phẩm
-  name: string; // Tên của sản phẩm
-  price: number; // Giá của sản phẩm
-  link: string; // Đường dẫn đến trang sản phẩm
-  star: number; // Số sao đánh giá sản phẩm
-  num_review: number; // Số lượng đánh giá
-}
-
 interface CardProductProps {
   product: Product;
 }
@@ -19,7 +10,7 @@ interface CardProductProps {
 const CardProduct: React.FC<CardProductProps> = ({ product }) => {
   return (
     <Link
-      href={product.link}
+      href={`/${product.category_slug}/${product.product_slug}`}
       className=" block shadow-sm border rounded-lg hover:shadow-lg transition duration-200 bg-white group"
     >
       <div className="relative h-[163px] mt-4 mx-2 group-hover:-translate-y-3 transition-transform duration-300">

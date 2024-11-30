@@ -9,191 +9,217 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {
-      fontFamily: {
-        sans: ["Sarabun", "sans-serif"],
-      },
-      colors: {
-        base: {
-          white: "#fafafa",
-          white100: "#f0f0f0",
-          white200: "#ffffff",
-          semiWhite: "#f2f2f2",
-          black: "#0b0a0a",
-          black100: "#000000",
-        },
-        primary: {
-          "100": "#fee2e2",
-          "200": "#fecaca",
-          "300": "#fca5a5",
-          "400": "#f87171",
-          "500": "#ef4444",
-          "600": "#dc2626",
-          "700": "#b91c1c",
-          "800": "#991b1b",
-          "900": "#7f1d1d",
-          "1000": "#450a0a",
-          main: "#d80018",
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          "100": "#ffefdb",
-          "200": "#fedfb7",
-          "300": "#fed094",
-          "400": "#fdc070",
-          "500": "#fd9f26",
-          "600": "#fa8f03",
-          "700": "#d57902",
-          "800": "#af6402",
-          "900": "#8a4f02",
-          "1000": "#643901",
-          main: "#fdb04c",
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        neutrals: {
-          "100": "#e4e4e4",
-          "200": "#cfcece",
-          "300": "#bab8b8",
-          "400": "#a5a1a1",
-          "500": "#908b8b",
-          "600": "#7a7474",
-          "700": "#655f5f",
-          "800": "#4e4949",
-          "900": "#383434",
-          "1000": "#221f1f",
-        },
-        success: {
-          "100": "#e8fcf9",
-          "200": "#d2faf3",
-          "300": "#bbf7ed",
-          "400": "#7eefdd",
-          "500": "#58ebd3",
-          "600": "#32e6c9",
-          "700": "#1ad4b6",
-          "800": "#15ae96",
-          "900": "#108975",
-          "1000": "#0c6355",
-          main: "#a4f4e7",
-        },
-        warning: {
-          "100": "#fcf1e3",
-          "200": "#fae3c7",
-          "300": "#f7d5ac",
-          "400": "#f0b56b",
-          "500": "#eda247",
-          "600": "#e99022",
-          "700": "#ce7b14",
-          "800": "#aa6511",
-          "900": "#854f0d",
-          "1000": "#60390a",
-          main: "#f4c790",
-        },
-        error: {
-          "100": "#fae0e2",
-          "200": "#f4c0c5",
-          "300": "#efa1a9",
-          "400": "#e9818c",
-          "500": "#de4252",
-          "600": "#d62537",
-          "700": "#b61f2e",
-          "800": "#961a26",
-          "900": "#76141e",
-          "1000": "#560f16",
-          main: "#e4626f",
-        },
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
-        },
-      },
-      spacing: {
-        xxs: "0.25rem",
-        xs: "0.375rem",
-        s: "0.5rem",
-        sm: "0.75rem",
-        base: "1rem",
-        m: "1rem",
-        ml: "1.5rem",
-        l: "1.75rem",
-        xl: "2rem",
-        "2xl": "2.5rem",
-        "3xl": "3rem",
-        "4xl": "3.5rem",
-        "5xl": "4rem",
-        "6xl": "4.5rem",
-        "7xl": "6rem",
-        "8xl": "8rem",
-      },
-      borderRadius: {
-        sharp: "0px",
-        xxs: "2px",
-        xs: "2px",
-        s: "4px",
-        sm: "calc(var(--radius) - 4px)",
-        sms: "10px",
-        ms: "12px",
-        m: "16px",
-        ml: "32px",
-        lg: "var(--radius)",
-        xl: "128px",
-        round: "999px",
-        md: "calc(var(--radius) - 2px)",
-      },
-      boxShadow: {
-        custom:
-          "0px 10px 15px -3px rgba(0, 0, 0, 0.10), 0px 4px 6px -4px rgba(0, 0, 0, 0.10)",
-        tab: "2px 4px 2px 0px rgba(0, 0, 0, 0.25)",
-      },
-      backgroundImage: {
-        "header-gradient":
-          "linear-gradient(90deg, #FAFAFA 84.47%, rgba(250, 250, 250, 0.00) 100%)",
-      },
-      keyframes: {
-        fadeIn: {
-          "0%": {
-            opacity: "0",
-            transform: "translateY(1rem)",
-          },
-          "100%": {
-            opacity: "1",
-            transform: "translateY(0)",
-          },
-        },
-      },
-      animation: {
-        fadeIn: "fadeIn 0.3s ease-out",
-      },
-    },
+  	extend: {
+  		fontFamily: {
+  			sans: ["Sarabun", "sans-serif"]
+  		},
+  		colors: {
+  			base: {
+  				white: '#fafafa',
+  				white100: '#f0f0f0',
+  				white200: '#ffffff',
+  				semiWhite: '#f2f2f2',
+  				black: '#0b0a0a',
+  				black100: '#000000'
+  			},
+  			primary: {
+  				'100': '#fee2e2',
+  				'200': '#fecaca',
+  				'300': '#fca5a5',
+  				'400': '#f87171',
+  				'500': '#ef4444',
+  				'600': '#dc2626',
+  				'700': '#b91c1c',
+  				'800': '#991b1b',
+  				'900': '#7f1d1d',
+  				'1000': '#450a0a',
+  				main: '#d80018',
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
+  			secondary: {
+  				'100': '#ffefdb',
+  				'200': '#fedfb7',
+  				'300': '#fed094',
+  				'400': '#fdc070',
+  				'500': '#fd9f26',
+  				'600': '#fa8f03',
+  				'700': '#d57902',
+  				'800': '#af6402',
+  				'900': '#8a4f02',
+  				'1000': '#643901',
+  				main: '#fdb04c',
+  				DEFAULT: 'hsl(var(--secondary))',
+  				foreground: 'hsl(var(--secondary-foreground))'
+  			},
+  			neutrals: {
+  				'100': '#e4e4e4',
+  				'200': '#cfcece',
+  				'300': '#bab8b8',
+  				'400': '#a5a1a1',
+  				'500': '#908b8b',
+  				'600': '#7a7474',
+  				'700': '#655f5f',
+  				'800': '#4e4949',
+  				'900': '#383434',
+  				'1000': '#221f1f'
+  			},
+  			success: {
+  				'100': '#e8fcf9',
+  				'200': '#d2faf3',
+  				'300': '#bbf7ed',
+  				'400': '#7eefdd',
+  				'500': '#58ebd3',
+  				'600': '#32e6c9',
+  				'700': '#1ad4b6',
+  				'800': '#15ae96',
+  				'900': '#108975',
+  				'1000': '#0c6355',
+  				main: '#a4f4e7'
+  			},
+  			warning: {
+  				'100': '#fcf1e3',
+  				'200': '#fae3c7',
+  				'300': '#f7d5ac',
+  				'400': '#f0b56b',
+  				'500': '#eda247',
+  				'600': '#e99022',
+  				'700': '#ce7b14',
+  				'800': '#aa6511',
+  				'900': '#854f0d',
+  				'1000': '#60390a',
+  				main: '#f4c790'
+  			},
+  			error: {
+  				'100': '#fae0e2',
+  				'200': '#f4c0c5',
+  				'300': '#efa1a9',
+  				'400': '#e9818c',
+  				'500': '#de4252',
+  				'600': '#d62537',
+  				'700': '#b61f2e',
+  				'800': '#961a26',
+  				'900': '#76141e',
+  				'1000': '#560f16',
+  				main: '#e4626f'
+  			},
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
+  			card: {
+  				DEFAULT: 'hsl(var(--card))',
+  				foreground: 'hsl(var(--card-foreground))'
+  			},
+  			popover: {
+  				DEFAULT: 'hsl(var(--popover))',
+  				foreground: 'hsl(var(--popover-foreground))'
+  			},
+  			muted: {
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
+  			},
+  			accent: {
+  				DEFAULT: 'hsl(var(--accent))',
+  				foreground: 'hsl(var(--accent-foreground))'
+  			},
+  			destructive: {
+  				DEFAULT: 'hsl(var(--destructive))',
+  				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			border: 'hsl(var(--border))',
+  			input: 'hsl(var(--input))',
+  			ring: 'hsl(var(--ring))',
+  			chart: {
+  				'1': 'hsl(var(--chart-1))',
+  				'2': 'hsl(var(--chart-2))',
+  				'3': 'hsl(var(--chart-3))',
+  				'4': 'hsl(var(--chart-4))',
+  				'5': 'hsl(var(--chart-5))'
+  			},
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--sidebar-background))',
+  				foreground: 'hsl(var(--sidebar-foreground))',
+  				primary: 'hsl(var(--sidebar-primary))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				accent: 'hsl(var(--sidebar-accent))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+  				border: 'hsl(var(--sidebar-border))',
+  				ring: 'hsl(var(--sidebar-ring))'
+  			}
+  		},
+  		spacing: {
+  			xxs: '0.25rem',
+  			xs: '0.375rem',
+  			s: '0.5rem',
+  			sm: '0.75rem',
+  			base: '1rem',
+  			m: '1rem',
+  			ml: '1.5rem',
+  			l: '1.75rem',
+  			xl: '2rem',
+  			'2xl': '2.5rem',
+  			'3xl': '3rem',
+  			'4xl': '3.5rem',
+  			'5xl': '4rem',
+  			'6xl': '4.5rem',
+  			'7xl': '6rem',
+  			'8xl': '8rem'
+  		},
+  		borderRadius: {
+  			sharp: '0px',
+  			xxs: '2px',
+  			xs: '2px',
+  			s: '4px',
+  			sm: 'calc(var(--radius) - 4px)',
+  			sms: '10px',
+  			ms: '12px',
+  			m: '16px',
+  			ml: '32px',
+  			lg: 'var(--radius)',
+  			xl: '128px',
+  			round: '999px',
+  			md: 'calc(var(--radius) - 2px)'
+  		},
+  		boxShadow: {
+  			custom: '0px 10px 15px -3px rgba(0, 0, 0, 0.10), 0px 4px 6px -4px rgba(0, 0, 0, 0.10)',
+  			tab: '2px 4px 2px 0px rgba(0, 0, 0, 0.25)'
+  		},
+  		backgroundImage: {
+  			'header-gradient': 'linear-gradient(90deg, #FAFAFA 84.47%, rgba(250, 250, 250, 0.00) 100%)'
+  		},
+  		keyframes: {
+  			fadeIn: {
+  				'0%': {
+  					opacity: '0',
+  					transform: 'translateY(1rem)'
+  				},
+  				'100%': {
+  					opacity: '1',
+  					transform: 'translateY(0)'
+  				}
+  			},
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			}
+  		},
+  		animation: {
+  			fadeIn: 'fadeIn 0.3s ease-out',
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
+  		}
+  	}
   },
   plugins: [tailwindcssAnimate],
 } satisfies Config;

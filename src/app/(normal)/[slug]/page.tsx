@@ -1,9 +1,6 @@
 import ListProductCategoryForm from "@/components/organisms/ListProductCategory/ListProductCategoryForm";
 
-interface ListProductCategoryPageProps {
-  params: { slug: string };
-}
-const ListProductCategoryPage: React.FC<ListProductCategoryPageProps> = () => {
+const ListProductCategoryPage: React.FC = () => {
   return <ListProductCategoryForm />;
 };
 
