@@ -1,6 +1,7 @@
 import { Sarabun } from "next/font/google";
 import "../globals.css";
 import type { Metadata } from "next";
+import AdminLayoutWrapper from "@/components/organisms/LayoutWrapper/AdminLayoutWrapper";
 
 const sarabun = Sarabun({
   weight: ["400", "500"],
@@ -20,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={sarabun.className}>{children}</body>
+      <body className={sarabun.className}>
+        <AdminLayoutWrapper>{children}</AdminLayoutWrapper>
+      </body>
     </html>
   );
 }

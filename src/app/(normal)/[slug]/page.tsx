@@ -1,6 +1,6 @@
 import ListProductCategoryForm from "@/components/organisms/ListProductCategory/ListProductCategoryForm";
-
-const ListProductCategoryPage: React.FC = () => {
+// import { notFound } from "next/navigation";
+const ListProductCategoryPage = async () => {
   return <ListProductCategoryForm />;
 };
 

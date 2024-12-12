@@ -11,43 +11,47 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   // Danh sach listcategory hop le
-  const validCategories = [
-    "dtdd",
-    "laptop",
-    "phu-kien",
-    "dong-ho",
-    "dong-ho-thong-minh",
-    "man-hinh",
-  ];
+  // const validCategories = [
+  //   "dtdd",
+  //   "laptop",
+  //   "phu-kien",
+  //   "dong-ho",
+  //   "dong-ho-thong-minh",
+  //   "man-hinh",
+  // ];
 
-  if (
-    pathname === "/" ||
-    pathname.startsWith("/error") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/register") ||
-    pathname.startsWith("/verify") ||
-    pathname.startsWith("/forgot-password")
-  ) {
-    return NextResponse.next();
-  }
-  const slug = pathname.split("/")[1];
+  // if (
+  //   pathname === "/" ||
+  //   pathname.startsWith("/error") ||
+  //   pathname.startsWith("/login") ||
+  //   pathname.startsWith("/register") ||
+  //   pathname.startsWith("/verify") ||
+  //   pathname.startsWith("/forgot-password") ||
+  //   pathname.startsWith("/reset-password") ||
+  //   pathname.startsWith("/dashboard-admin") ||
+  //   pathname.startsWith("/lich-su-mua-hang")
+  // ) {
+  //   return NextResponse.next();
+  // }
+  // const slug = pathname.split("/")[1];
 
-  const matchedSlug = validCategories.find((category) =>
-    slug.startsWith(category)
-  );
+  // const matchedSlug = validCategories.find((category) =>
+  //   slug.startsWith(category)
+  // );
 
-  if (!matchedSlug) {
-    return NextResponse.redirect(new URL("/error", request.url));
-  }
+  // if (!matchedSlug) {
+  //   return NextResponse.redirect(new URL("/error", request.url));
+  // }
 
-  if (slug !== matchedSlug) {
-    // Nếu slug không khớp chính xác, chuyển hướng tới slug hợp lệ
-    url.pathname = `/${matchedSlug}`;
-    return NextResponse.redirect(url);
-  }
+  // if (slug !== matchedSlug) {
+  //   // Nếu slug không khớp chính xác, chuyển hướng tới slug hợp lệ
+  //   url.pathname = `/${matchedSlug}`;
+  //   return NextResponse.redirect(url);
+  // }
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|auth).*)"],
+  // matcher: ["/((?!_next/static|_next/image|favicon.ico|auth).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|auth).*)$", "/"],
 };

@@ -1,24 +1,24 @@
 interface Color {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   code: string;
 }
 
 interface RAM {
-  id: number;
+  id: string;
   name: string;
   slug: string;
 }
 
 interface ROM {
-  id: number;
+  id: string;
   name: string;
   slug: string;
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SingleProduct {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   category: string;
@@ -38,7 +38,7 @@ interface SingleProduct {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Variant {
-  id: number;
+  id: string;
   name: string;
   color_slug: string;
   rom_slug: string;

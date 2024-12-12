@@ -49,7 +49,7 @@ const DashboardPage: React.FC = () => {
         <Sidebar />
         {/* carousel */}
         <div className=" border shadow-md rounded-lg overflow-hidden">
-          <Carousel className="w-full h-full ml-3 ">
+          <Carousel className="w-full h-full ">
             <CarouselContent className="-ml-1 h-full">
               {banner.map((item, index) => (
                 <CarouselItem key={index} className="pl-1 h-full">
