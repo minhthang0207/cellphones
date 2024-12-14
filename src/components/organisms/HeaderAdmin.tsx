@@ -1,11 +1,13 @@
 "use client";
 
+import { useUserStore } from "@/store/user";
 import "moment/locale/vi";
 import { AiOutlineMessage } from "react-icons/ai";
 import { FaSearch } from "react-icons/fa";
-// import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const HeaderAdmin: React.FC = () => {
+  const user = useUserStore((state) => state.user);
   return (
     <div className="bg-white w-full h-[64px] bg-red flex justify-between items-center border border-b shadow-md p-4">
       {/* Search */}
@@ -30,13 +32,17 @@ const HeaderAdmin: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex flex-col gap-1">
             <span className="text-base font-semibold text-neutral-700 text-right">
-              Hoang Minh Thắng
+              {user.name}
             </span>
             <span className="text-sm font-semibold text-neutral-400 text-right">
-              Admin
+              {user.role}
             </span>
           </div>
-          <div className="bg-red-400 w-12 h-12 rounded-full"></div>
+          <Avatar>
+            <AvatarImage src={user.avatar} className="object-cover" />
+            {/* "https://github.com/shadcn.png" */}
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { Sarabun } from "next/font/google";
 import "../globals.css";
 import type { Metadata } from "next";
 import AdminLayoutWrapper from "@/components/organisms/LayoutWrapper/AdminLayoutWrapper";
+import { Toaster } from "@/components/ui/sonner";
 
 const sarabun = Sarabun({
   weight: ["400", "500"],
@@ -10,8 +11,8 @@ const sarabun = Sarabun({
 });
 
 export const metadata: Metadata = {
-  title: "CellphoneS Admin Dashboard",
-  description: "CellphoneS Admin Dashboard",
+  title: "Admin Dashboard",
+  description: "Admin Dashboard",
 };
 
 export default function RootLayout({
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={sarabun.className}>
+        <Toaster position="top-center" />
         <AdminLayoutWrapper>{children}</AdminLayoutWrapper>
       </body>
     </html>

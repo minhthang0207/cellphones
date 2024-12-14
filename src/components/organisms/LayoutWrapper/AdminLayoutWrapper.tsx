@@ -6,6 +6,10 @@ import { FaCalendar, FaInbox, FaSearch, FaChartBar } from "react-icons/fa";
 import { LuPackageSearch, LuSheet } from "react-icons/lu";
 import { CiLogout } from "react-icons/ci";
 import { BiCategory } from "react-icons/bi";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useUserStore } from "@/store/user";
+import { getUser } from "@/lib";
 
 const menuItems = [
   {
@@ -19,33 +23,33 @@ const menuItems = [
 
       {
         label: "Sản phẩm",
-        url: "/products",
+        url: "/dashboard-admin/san-pham",
         icon: <LuPackageSearch size={20} />,
       },
       {
         label: "Loại sản phẩm",
-        url: "/product-category",
+        url: "/dashboard-admin/loai-san-pham",
         icon: <BiCategory size={20} />,
       },
       {
         label: "Thuộc tính",
-        url: "/attributes",
+        url: "/dashboard-admin/thuoc-tinh",
         icon: <LuSheet size={20} />,
       },
       {
-        label: "Nhân viên",
-        url: "/customers",
+        label: "Người dùng",
+        url: "/dashboard-admin/nguoi-dung",
         icon: <IoMdContact size={20} />,
       },
 
       {
         label: "Tin nhắn",
-        url: "/inboxs",
+        url: "/dashboard-admin/tin-nhan",
         icon: <FaInbox size={20} />,
       },
       {
         label: "Thống kê",
-        url: "/statistics",
+        url: "/dashboard-admin/thong-ke",
         icon: <FaChartBar size={20} />,
       },
     ],
@@ -77,14 +81,41 @@ const menuItems = [
   },
 ];
 const AdminLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+  const pathname = usePathname();
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const user = useUserStore((state) => state.user);
+  const addUser = useUserStore((state) => state.addUser);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const result = await getUser();
+      if (result.success && result.data.user) {
+        addUser(result.data.user);
+      } else {
+        router.push("/login");
+      }
+    };
+    if (Object.keys(user).length === 0 && !isAuthPage) {
+      fetchUserData();
+    }
+
+    if (Object.keys(user).length > 0 && user && !isAuthPage) {
+      if (user.role !== "user" && user.role !== "admin") {
+        router.push("/login");
+      } else if (user.role === "user") {
+        router.push("/");
+      }
+    }
+  }, [user, isAuthPage, addUser, router]);
   return (
     <div className="flex w-full h-screen overflow-hidden bg-neutral-100">
       {/* LEFT */}
-      <div className="w-[14%] md:w-[8%] lg:w-[16%]  xl:w-[14%] p-4 bg-white">
+      <div className="w-fit bg-white overflow-auto custom-scrollbar flex-shrink-0 ">
         <SidebarAdmin menuItems={menuItems} />
       </div>
       {/* RIGHT */}
-      <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-neutral-100 overflow-y-scroll">
+      <div className="w-full bg-neutral-100 overflow-y-scroll">
         <HeaderAdmin />
         <main>{children}</main>
       </div>

@@ -73,18 +73,22 @@ const LoginForm = () => {
     }
     setIsLoading(true);
     const result = await login(email, password);
-    setIsLoading(false);
 
     const resultUser = await getUser();
     if (resultUser.success && resultUser.data.user) {
       addUser(resultUser.data.user);
     }
+    setIsLoading(false);
 
     if (result.message === "Tài khoản này chưa được xác thực") {
       return router.push(`verify?email=${encodeURIComponent(email)}`);
     }
     if (result.success) {
-      router.push("/");
+      if (resultUser.data.user.role === "user") {
+        router.push("/");
+      } else {
+        router.push("dashboard-admin");
+      }
     } else {
       setError(result.message);
     }
