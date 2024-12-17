@@ -35,8 +35,6 @@ const NormalLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
       const result = await getUser();
       if (result.success && result.data.user) {
         addUser(result.data.user);
-      } else {
-        router.push("/login");
       }
     };
     if (Object.keys(user).length === 0 && !isAuthPage) {
@@ -44,9 +42,7 @@ const NormalLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (Object.keys(user).length > 0 && user && !isAuthPage) {
-      if (user.role !== "user" && user.role !== "admin") {
-        router.push("/login");
-      } else if (user.role === "admin") {
+      if (user.role === "admin") {
         router.push("/dashboard-admin");
       }
     }

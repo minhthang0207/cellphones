@@ -343,6 +343,7 @@ export async function updateUserLocation(data: {
   }
 }
 
+// GET ALL BRAND
 export async function getAllBrand(): Promise<{
   success: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -510,6 +511,798 @@ export async function deleteBrand(id: string): Promise<{
     // Gửi yêu cầu đến API để lấy thông tin người dùng
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/brands/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL RAM
+export async function getAllRam(): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/rams/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE RAM
+export async function createRam(data: {
+  capacity: number;
+  description: string;
+}): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/rams/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// UPDATE RAM
+export async function updateRam(
+  data: {
+    capacity: number;
+    description: string;
+  },
+  id: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/rams/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// DELETE RAM
+export async function deleteRam(id: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/rams/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL ROM
+export async function getAllRom(): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/roms/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE ROM
+export async function createRom(data: {
+  capacity: number;
+  description: string;
+}): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/roms/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// UPDATE ROM
+export async function updateRom(
+  data: {
+    capacity: number;
+    description: string;
+  },
+  id: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/roms/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// DELETE ROM
+export async function deleteRom(id: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/roms/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL COLOR
+export async function getAllColor(): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/colors/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE COLOR
+export async function createColor(data: {
+  name: string;
+  code: string;
+}): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/colors/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// UPDATE COLOR
+export async function updateColor(
+  data: {
+    name: string;
+    code: string;
+  },
+  id: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/colors/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// DELETE COLOR
+export async function deleteColor(id: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/colors/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL CATEGORY
+export async function getAllCategory(): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/product_categories/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE CATEGORY
+export async function createCategory(data: {
+  name: string;
+  description: string;
+}): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/product_categories/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// UPDATE CATEGORY
+export async function updateCategory(
+  data: {
+    name: string;
+    description: string;
+  },
+  id: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/product_categories/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// DELETE CATEGORY
+export async function deleteCategory(id: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/product_categories/${id}`,
       {
         method: "DELETE",
         headers: {

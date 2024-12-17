@@ -4,54 +4,55 @@ import Loading from "@/components/organisms/Loading";
 import CustomAlertDialog from "@/components/ui/alert-dialog-custom";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createBrand, deleteBrand, getAllBrand, updateBrand } from "@/lib";
+import { createRam, deleteRam, getAllRam, updateRam } from "@/lib";
 import { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import { toast } from "sonner";
 
-interface Brand {
+interface Ram {
   id: string;
-  name: string;
+  capacity: number;
   description: string;
+  slug: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
 const RamForm: React.FC = () => {
-  const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
-  const [name, setName] = useState("");
+  const [selectedItem, setSelectedItem] = useState<Ram | null>(null);
+  const [capacity, setCapacity] = useState<string>("");
   const [description, setDescription] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [listBrand, setListBrand] = useState<Brand[]>([]);
+  const [listRam, setListRam] = useState<Ram[]>([]);
   const [isShowAlert, setIsShowAlert] = useState(false);
-  const handleSelectUpdate = (brand: Brand) => {
-    setSelectedBrand(brand);
+  const handleSelectUpdate = (ram: Ram) => {
+    setSelectedItem(ram);
     setIsEdit(true);
-    setName(brand.name);
-    setDescription(brand.description);
+    setCapacity(ram.capacity.toString());
+    setDescription(ram.description);
   };
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+    setCapacity(e.target.value);
   };
 
   const handleChangeDesc = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
   };
 
-  const handleDeleteBrand = (brand: Brand) => {
+  const handleDeleteBrand = (ram: Ram) => {
     setIsShowAlert(true);
-    setSelectedBrand(brand);
+    setSelectedItem(ram);
   };
 
   const handleDelete = async () => {
     setIsLoading(true);
-    if (selectedBrand) {
-      const result = await deleteBrand(selectedBrand.id);
+    if (selectedItem) {
+      const result = await deleteRam(selectedItem.id);
       if (result.success) {
-        await fetchBrand();
+        await fetchRam();
         toast.success(result.message);
       } else {
         toast.error(result.message);
@@ -61,15 +62,15 @@ const RamForm: React.FC = () => {
   };
 
   const handleCancel = () => {
-    setSelectedBrand(null);
+    setSelectedItem(null);
     setIsShowAlert(false); // Đóng dialog
   };
 
   const validate = () => {
     let valid = true;
 
-    if (!name) {
-      toast.error("Bạn cần nhập tên thương hiệu");
+    if (!capacity) {
+      toast.error("Bạn cần nhập dung lượng ram");
       valid = false;
     }
 
@@ -82,23 +83,23 @@ const RamForm: React.FC = () => {
     }
     setIsLoading(true);
     const data = {
-      name,
+      capacity: Number(capacity),
       description,
     };
     if (!isEdit) {
-      const result = await createBrand(data);
+      const result = await createRam(data);
       if (result.success) {
-        await fetchBrand();
+        await fetchRam();
         toast.success("Tạo mới thành công");
       } else {
         toast.error(result.message);
       }
     } else {
-      if (selectedBrand) {
-        const result = await updateBrand(data, selectedBrand.id);
+      if (selectedItem) {
+        const result = await updateRam(data, selectedItem.id);
         if (result.success) {
           toast.success("Cập nhật thành công");
-          await fetchBrand();
+          await fetchRam();
         } else {
           toast.error(result.message);
         }
@@ -106,15 +107,17 @@ const RamForm: React.FC = () => {
     }
     setIsLoading(false);
   };
-  const fetchBrand = async () => {
-    const result = await getAllBrand();
+  const fetchRam = async () => {
+    setIsLoading(true);
+    const result = await getAllRam();
     if (result.success) {
-      setListBrand(result.data.brands);
+      setListRam(result.data.rams);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    fetchBrand();
+    fetchRam();
   }, []);
 
   if (isLoading) {
@@ -130,11 +133,11 @@ const RamForm: React.FC = () => {
               Thông tin thuộc tính
             </h5>
             <div>
-              <p className="text-sm">Tên thương hiệu</p>
+              <p className="text-sm">Dung lượng Ram</p>
               <Input
                 placeholder=""
                 className="border-2"
-                value={name}
+                value={capacity.toString()}
                 onChange={(e) => handleChangeName(e)}
               />
             </div>
@@ -155,7 +158,7 @@ const RamForm: React.FC = () => {
                     type="button"
                     className="px-4 py-2 bg-blue-500 rounded-md"
                     onClick={() => {
-                      setName("");
+                      setCapacity("");
                       setDescription("");
                     }}
                   >
@@ -174,8 +177,8 @@ const RamForm: React.FC = () => {
                     type="button"
                     className="px-4 py-2 bg-red-400 rounded-md"
                     onClick={() => {
-                      setSelectedBrand(null);
-                      setName("");
+                      setSelectedItem(null);
+                      setCapacity("");
                       setDescription("");
                       setIsEdit(false);
                     }}
@@ -188,41 +191,45 @@ const RamForm: React.FC = () => {
           </form>
         </div>
         <div className="bg-white w-[70%]">
-          <table className="min-w-full bg-white border border-gray-200">
+          <table className=" min-w-full bg-white border border-gray-200">
             <thead>
               <tr className="bg-red-400 ">
                 <th className="py-2 px-4 border-b rounded-tl-md">STT</th>
-                <th className="py-2 px-4 border-b">Thương hiệu</th>
+                <th className="py-2 px-4 border-b ">Dung lượng</th>
                 <th className="py-2 px-4 border-b">Ghi chú</th>
+                <th className="py-2 px-4 border-b">Slug</th>
                 <th className="py-2 px-4 border-b rounded-tr-md"></th>
               </tr>
             </thead>
             <tbody className="text-sm ">
-              {listBrand?.map((brand, index) => (
+              {listRam?.map((item, index) => (
                 <tr
-                  key={brand.id}
+                  key={item.id}
                   className="hover:bg-neutral-200 transition duration-200"
                 >
                   <td className="py-2 px-4 border-b text-center">
                     {index + 1}
                   </td>
                   <td className="py-2 px-4 border-b text-center">
-                    {brand.name}
+                    {item.capacity}
                   </td>
                   <td className="py-2 px-4 border-b text-center">
-                    {brand.description}
+                    {item.description}
+                  </td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {item.slug}
                   </td>
 
                   <td className="py-2 px-4 border-b">
                     <button
                       className="bg-blue-500 text-white py-1 px-2 rounded"
-                      onClick={() => handleSelectUpdate(brand)}
+                      onClick={() => handleSelectUpdate(item)}
                     >
                       <CiEdit size={18} />
                     </button>
                     <button
                       className="bg-red-500 text-white py-1 px-2 rounded ml-2"
-                      onClick={() => handleDeleteBrand(brand)}
+                      onClick={() => handleDeleteBrand(item)}
                     >
                       <MdDelete size={18} />
                     </button>
@@ -245,7 +252,6 @@ const RamForm: React.FC = () => {
       </div>
     </div>
   );
-  return <div>RamForm</div>;
 };
 
 export default RamForm;

@@ -26,7 +26,6 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
   isUserInfoPage = false,
 }) => {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <div className="flex flex-col p-4 gap-4 w-fit justify-center">
       {!isUserInfoPage && (
@@ -54,6 +53,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
                       className={`w-full min-w-[46px]  whitespace-nowrap justify-center lg:justify-start px-2 py-2 flex gap-2 items-center text-neutral-700 font-normal rounded-lg ease-in-out transition-all duration-300 ${
                         pathname === item.url ||
                         (item.url !== "/dashboard-admin" &&
+                          item.url !== "/lich-su-mua-hang" &&
                           pathname.startsWith(item.url))
                           ? "bg-red-400 text-white"
                           : ""
