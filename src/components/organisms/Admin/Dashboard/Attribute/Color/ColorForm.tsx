@@ -3,17 +3,7 @@
 import Loading from "@/components/organisms/Loading";
 import CustomAlertDialog from "@/components/ui/alert-dialog-custom";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  createColor,
-  createRom,
-  deleteColor,
-  deleteRom,
-  getAllColor,
-  getAllRom,
-  updateColor,
-  updateRom,
-} from "@/lib";
+import { createColor, deleteColor, getAllColor, updateColor } from "@/lib";
 import { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
