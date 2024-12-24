@@ -10,14 +10,14 @@ interface CardProductProps {
 const CardProduct: React.FC<CardProductProps> = ({ product }) => {
   return (
     <Link
-      href={`/${product.category_slug}/${product.product_slug}`}
+      href={`/${product.Product_Category?.slug}/${product?.slug}`}
       className=" block shadow-sm border rounded-lg hover:shadow-lg transition duration-200 bg-white group"
     >
       <div className="relative h-[163px] mt-4 mx-2 group-hover:-translate-y-3 transition-transform duration-300">
         <Image
           fill
           alt={product.name}
-          src={product.img}
+          src={product.image}
           className="object-contain h-[163px]"
         />
       </div>
@@ -33,7 +33,7 @@ const CardProduct: React.FC<CardProductProps> = ({ product }) => {
           <div className="flex gap-2 items-center cursor-pointer">
             <MdOutlineStar size={20} className="text-yellow-400" />
             <span className="text-xs">
-              {product.star} ({product.num_review})
+              {product.average_rating} ({product.ratings_count})
             </span>
           </div>
           <button type="button">

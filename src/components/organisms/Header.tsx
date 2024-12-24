@@ -47,7 +47,10 @@ const Header: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center relative px-4 md:px-2 my-2 md:my-2 rounded-md transition duration-300 hover:bg-primary-500 text-white text-base">
+          <Link
+            href="/gio-hang"
+            className="flex items-center relative px-4 md:px-2 my-2 md:my-2 rounded-md transition duration-300 hover:bg-primary-500 text-white text-base"
+          >
             <div className="relative cursor-pointer">
               <IoCartOutline size={24} />
               {Object.keys(user).length > 0 && (
@@ -56,7 +59,7 @@ const Header: React.FC = () => {
                 </span>
               )}
             </div>
-          </div>
+          </Link>
           <div className="flex items-center relative px-4 md:px-2 my-2 rounded-md transition duration-300 hover:bg-primary-500 text-white text-base">
             <div className="relative cursor-pointer">
               <FaRegHeart size={20} />

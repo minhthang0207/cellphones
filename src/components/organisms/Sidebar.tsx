@@ -4,8 +4,9 @@ import Link from "next/link"; // Import cho điều hướng
 import { FaChevronRight, FaHeadphonesAlt } from "react-icons/fa";
 import { IoPhonePortraitOutline } from "react-icons/io5";
 import { FaLaptop } from "react-icons/fa6";
-import { BsWatch, BsFillUsbDriveFill, BsSmartwatch } from "react-icons/bs";
+import { BsWatch } from "react-icons/bs";
 import { TbDeviceDesktop } from "react-icons/tb";
+import { FaTabletAlt } from "react-icons/fa";
 
 // import Image from "next/image";
 
@@ -14,26 +15,33 @@ const Sidebar = () => {
 
   const categories = [
     {
-      name: "Điện thoại, Máy tính bảng",
+      name: "Điện thoại",
       icon: <IoPhonePortraitOutline size={22} />,
-      link: "/products/iphone",
+      link: "/dien-thoai",
       subcategories: [
         {
           name: "Điện thoại",
           items: [
-            { name: "iPhone", link: "/products/iphone" },
-            { name: "Samsung", link: "/products/samsung" },
-            { name: "Xiaomi", link: "/products/xiaomi" },
-            { name: "Nokia", link: "/products/nokia" },
+            { name: "iPhone", link: "/dien-thoai?thuonghieu=iphone" },
+            { name: "Samsung", link: "/dien-thoai?thuonghieu=samsung" },
+            { name: "Xiaomi", link: "/dien-thoai?thuonghieu=xiaomi" },
+            { name: "Nokia", link: "/dien-thoai?thuonghieu=oppo" },
           ],
         },
+      ],
+    },
+    {
+      name: "Máy tính bảng",
+      icon: <FaTabletAlt size={22} />,
+      link: "/may-tinh-bang",
+      subcategories: [
         {
-          name: "Máy tính bảng",
+          name: "Thương hiệu",
           items: [
-            { name: "iPhone", link: "/products/iphone" },
-            { name: "Samsung", link: "/products/samsung" },
-            { name: "Xiaomi", link: "/products/xiaomi" },
-            { name: "Nokia", link: "/products/nokia" },
+            { name: "Ipad", link: "/may-tinh-bang?thuonghieu=ipad" },
+            { name: "Samsung", link: "/may-tinh-bang?thuonghieu=sámung" },
+            { name: "Xiaomi", link: "/may-tinh-bang?thuonghieu=xiaomi" },
+            { name: "Huawei", link: "/may-tinh-bang?thuonghieu=huawei" },
           ],
         },
       ],
@@ -41,48 +49,16 @@ const Sidebar = () => {
     {
       name: "Laptop",
       icon: <FaLaptop size={22} />,
-      link: "/products/iphone",
+      link: "/laptop",
       subcategories: [
         {
           name: "Thương hiệu",
           items: [
-            { name: "MacBook", link: "/products/macbook" },
-            { name: "Dell", link: "/products/dell" },
-            { name: "HP", link: "/products/hp" },
-            { name: "Lenovo", link: "/products/lenovo" },
-          ],
-        },
-        {
-          name: "Chip",
-          items: [
-            { name: "Intel", link: "/products/intel" },
-            { name: "AMD", link: "/products/amd" },
-            { name: "M1/M2", link: "/products/m1-m2" },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Phụ kiện",
-      icon: <BsFillUsbDriveFill size={22} />,
-      link: "/products/iphone",
-      subcategories: [
-        {
-          name: "Phụ kiện di động",
-          items: [
-            { name: "Dán màn hình", link: "/products/headphones" },
-            { name: "Ốp lưng", link: "/products/cables" },
-            { name: "Cáp sạc", link: "/products/cases" },
-            { name: "Pin dự phòng", link: "/products/powerbanks" },
-          ],
-        },
-        {
-          name: "Phụ kiện máy tính",
-          items: [
-            { name: "Chuột", link: "/products/headphones" },
-            { name: "Bàn phím", link: "/products/cables" },
-            { name: "Thảm lót chuột", link: "/products/cases" },
-            { name: "Sạc laptop", link: "/products/powerbanks" },
+            { name: "MacBook", link: "/laptop?thuonghieu=macbook" },
+            { name: "Dell", link: "/laptop?thuonghieu=dell" },
+            { name: "HP", link: "/laptop/hp" },
+            { name: "Lenovo", link: "/laptop?thuonghieu=lenovo" },
+            { name: "Acer", link: "/laptop?thuonghieu=acer" },
           ],
         },
       ],
@@ -90,15 +66,16 @@ const Sidebar = () => {
     {
       name: "Tai nghe",
       icon: <FaHeadphonesAlt size={22} />,
+      link: "/tai-nghe",
       subcategories: [
         {
           name: "Hãng tai nghe",
           items: [
-            { name: "Apple", link: "/products/iphone" },
-            { name: "Sony", link: "/products/samsung" },
-            { name: "JBL", link: "/products/xiaomi" },
-            { name: "Huawai", link: "/products/nokia" },
-            { name: "Xiaomi", link: "/products/nokia" },
+            { name: "Apple", link: "/tai-nghe?thuonghieu=apple" },
+            { name: "Sony", link: "/tai-nghe?thuonghieu=sony" },
+            { name: "JBL", link: "/tai-nghe?thuonghieu=jbl" },
+            { name: "Huawai", link: "/tai-nghe?thuonghieu=huawei" },
+            { name: "Xiaomi", link: "/tai-nghe?thuonghieu=xiaomi" },
           ],
         },
       ],
@@ -106,41 +83,12 @@ const Sidebar = () => {
     {
       name: "Đồng hồ",
       icon: <BsWatch size={22} />,
-      link: "/products/iphone",
-      // subcategories: [
-      //   {
-      //     name: "Thương hiệu",
-      //     items: [
-      //       { name: "Apple Watch", link: "/products/iphone" },
-      //       { name: "Samsung", link: "/products/samsung" },
-      //       { name: "Xiaomi", link: "/products/xiaomi" },
-      //       { name: "Huawai", link: "/products/nokia" },
-      //       { name: "Black Shark", link: "/products/nokia" },
-      //     ],
-      //   },
-      // ],
-    },
-    {
-      name: "SmartWatch",
-      icon: <BsSmartwatch size={22} />,
-      link: "/products/iphone",
-      // subcategories: [
-      //   {
-      //     name: "Thương hiệu",
-      //     items: [
-      //       { name: "Apple Watch", link: "/products/iphone" },
-      //       { name: "Samsung", link: "/products/samsung" },
-      //       { name: "Xiaomi", link: "/products/xiaomi" },
-      //       { name: "Huawai", link: "/products/nokia" },
-      //       { name: "Black Shark", link: "/products/nokia" },
-      //     ],
-      //   },
-      // ],
+      link: "/dong-ho",
     },
     {
       name: "Màn hình",
       icon: <TbDeviceDesktop size={22} />,
-      link: "/products/iphone",
+      link: "/man-hinh",
     },
   ];
 
@@ -149,7 +97,8 @@ const Sidebar = () => {
       {/* Sidebar (300px) */}
       <div className="relative z-10 w-[300px] bg-white border shadow-md rounded-lg text-neutral-700">
         {categories.map((category, index) => (
-          <div
+          <Link
+            href={category.link}
             key={index}
             className="flex items-center justify-between p-4 cursor-pointer transition duration-300 hover:text-red-600"
             onMouseEnter={() => setHoveredCategory(category.name)} // Hiển thị subcategories
@@ -159,7 +108,7 @@ const Sidebar = () => {
               <span>{category.name}</span>
             </div>
             {category.subcategories !== undefined && <FaChevronRight />}
-          </div>
+          </Link>
         ))}
       </div>
       {/* Content hover */}

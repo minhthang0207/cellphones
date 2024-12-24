@@ -29,7 +29,7 @@ const Loading: React.FC<LoadingProps> = ({
         </div>
       ) : (
         <div className="w-full h-full flex items-center justify-center">
-          <ImSpinner8 className="animate-spin" />
+          <ImSpinner8 className="animate-spin text-red-500" size={30} />
         </div>
       )}
     </>

@@ -9,15 +9,6 @@ import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import { toast } from "sonner";
 
-interface Color {
-  id: string;
-  name: string;
-  code: string;
-  slug: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 const ColorForm: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<Color | null>(null);
   const [name, setName] = useState<string>("");

@@ -17,6 +17,8 @@ interface FilterModalProps {
   selectedFilters: SelectedFilters;
   onFilterChange: (category: keyof SelectedFilters, value: string) => void;
   onDeleteAllFilter: () => void;
+  // setProducts: Dispatch<SetStateAction<Product[]>>;
+  onSumbitResult: () => void;
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({
@@ -24,6 +26,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   selectedFilters,
   onFilterChange,
   onDeleteAllFilter,
+  onSumbitResult,
 }) => {
   const pathname = usePathname();
   const [isModalShow, setIsModalShow] = useState(false);
@@ -31,12 +34,28 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const currentFilters = options[pathname] || {};
   // console.log(Object.entries(selectedFilters));
 
+  console.log(selectedFilters);
+
+  const handleResult = async () => {
+    setIsModalShow(false);
+    await onSumbitResult();
+  };
+
+  const handleDeleteFilter = async () => {
+    setIsModalShow(false);
+    await onDeleteAllFilter();
+  };
+
+  const handleDeleteSingleFilter = (key: string, value: string) => {
+    onFilterChange(key as keyof SelectedFilters, value);
+  };
+
   return (
     <div className="relative">
       {/* overlay */}
       {isModalShow && (
         <div
-          className="fixed top-0 left-0 w-screen h-screen bg-neutral-300 opacity-60 z-30"
+          className="fixed top-0 left-0 w-screen h-screen bg-neutral-300 opacity-60 z-50"
           onClick={() => setIsModalShow(false)}
         ></div>
       )}
@@ -60,8 +79,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
       </button>
       {/* modal */}
       {isModalShow && (
-        <div className="absolute top-full mt-3 left-0 rounded-lg shadow-lg bg-white z-50 overflow-y-scroll max-h-[400px] h-fit pl-4 pt-4 pr-4">
-          <div></div>
+        <div className="absolute  top-full h-fit w-fit mt-3 left-0 rounded-lg shadow-lg bg-white z-50 overflow-y-scroll max-h-[400px] pl-4 pt-4 pr-4">
           {/* header */}
           {/* Button close */}
           <button
@@ -91,9 +109,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                         key={`${key}-${index}`}
                         type="button"
                         className="border flex items-center gap-2 py-1 px-2 text-base rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition duration-300"
-                        onClick={() =>
-                          onFilterChange(key as keyof SelectedFilters, value)
-                        }
+                        onClick={() => handleDeleteSingleFilter(key, value)}
                       >
                         {text}
                         <FaTimes size={14} className="text-red-600" />
@@ -104,7 +120,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
                 <button
                   className="text-sm text-red-500 underline"
-                  onClick={() => onDeleteAllFilter()}
+                  onClick={() => handleDeleteFilter()}
                 >
                   Xóa tất cả
                 </button>
@@ -113,6 +129,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           )}
 
           {/* content */}
+
           {Object.entries(currentFilters).map(
             ([key, { title, options }], index) => {
               return (
@@ -158,14 +175,16 @@ const FilterModal: React.FC<FilterModalProps> = ({
               <button
                 type="button"
                 className="text-red-600 bg-white border rounded-lg border-red-500 min-w-[100px] w-full h-full"
+                onClick={() => setIsModalShow(false)}
               >
                 Bỏ chọn
               </button>
               <button
                 type="button"
                 className="text-white bg-red-500 border rounded-lg border-red-500 min-w-[100px] w-full h-full"
+                onClick={handleResult}
               >
-                Xem 25 kết quả
+                Xem kết quả
               </button>
             </div>
           )}

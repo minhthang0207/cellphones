@@ -10,15 +10,6 @@ import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import { toast } from "sonner";
 
-interface Rom {
-  id: string;
-  capacity: number;
-  description: string;
-  slug: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 const RomForm: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<Rom | null>(null);
   const [capacity, setCapacity] = useState<string>("");

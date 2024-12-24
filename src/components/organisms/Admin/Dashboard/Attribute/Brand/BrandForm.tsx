@@ -10,14 +10,6 @@ import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import { toast } from "sonner";
 
-interface Brand {
-  id: string;
-  name: string;
-  description: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 const BrandForm: React.FC = () => {
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
   const [name, setName] = useState("");

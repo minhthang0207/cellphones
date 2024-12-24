@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={sarabun.className}>
+      <body className={`h-screen overflow-hidden ${sarabun.className}`}>
         <Toaster position="top-center" />
         <AdminLayoutWrapper>{children}</AdminLayoutWrapper>
       </body>

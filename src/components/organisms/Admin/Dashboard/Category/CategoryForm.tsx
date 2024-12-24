@@ -15,15 +15,6 @@ import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import { toast } from "sonner";
 
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  slug: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 const CategoryForm: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<Category | null>(null);
   const [name, setName] = useState<string>("");

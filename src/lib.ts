@@ -1332,3 +1332,1042 @@ export async function deleteCategory(id: string): Promise<{
     return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
   }
 }
+
+interface Filter {
+  brand?: string[];
+  price?: string[];
+  ram?: string[];
+  rom?: string[];
+}
+
+// GET PRODUCT FILTERED
+export async function getFilteredProduct(
+  sortOrder: string,
+  categorySlug: string,
+  filters?: Filter
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    const filterList: URLSearchParams = new URLSearchParams();
+    if (filters) {
+      if (filters.brand && filters.brand?.length > 0) {
+        filterList.append("brandSlug", filters.brand.join(",").trim());
+      }
+
+      // Xử lý price
+      if (filters.price && filters.price?.length > 0) {
+        filterList.append("price", filters.price.join(",").trim());
+      }
+
+      if (filters.ram && filters.ram?.length > 0) {
+        filterList.append("ram", filters.ram.join(","));
+      }
+
+      if (filters.rom && filters.rom?.length > 0) {
+        filterList.append("rom", filters.rom.join(","));
+      }
+    }
+
+    // Kiểm tra sortOrder và thêm tham số sort nếu cần
+    if (sortOrder === "noi-bat") {
+      filterList.append("sort", "-average_rating"); //
+    }
+
+    if (sortOrder === "gia-tang-dan") {
+      filterList.append("sort", "price");
+    }
+
+    if (sortOrder === "gia-giam-dan") {
+      filterList.append("sort", "-price");
+    }
+    if (categorySlug) {
+      filterList.append("categorySlug", categorySlug);
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/api/products?${filterList.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+    console.log(result.data);
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET PRODUCT BY SLUG (SINGLEPRODUCT PAGE)
+export async function getProductBySlug(productSlug: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products/slug/${productSlug}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET PRODUCT BY CATEGORY
+export async function getProductByCategorySlug(categorySlug: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products?categorySlug=${categorySlug}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET OUTSTANDING PRODUCT
+export async function getOutStandingProduct(): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products/top-30-outstanding`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL PRODUCT
+export async function getAllProduct(): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL PRODUCT ALL ATTRIBUTE
+export async function getProductWithAllAttribute(productId: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data.product,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE PRODUCT
+export async function createProduct(data: {
+  name: string;
+  price: string;
+  origin: string;
+  description: string;
+  category_id: string;
+  brand_id: string;
+  product_image: File | null;
+  product_images: File[] | [];
+}): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    const formData = new FormData();
+    if (data.product_image) {
+      formData.append("product_image", data.product_image);
+    }
+    if (data.product_images) {
+      data.product_images.forEach((image) => {
+        formData.append("product_images", image);
+      });
+    }
+    formData.append("name", data.name);
+    formData.append("price", data.price);
+    formData.append("origin", data.origin);
+    formData.append("description", data.description);
+    formData.append("category_id", data.category_id);
+    formData.append("brand_id", data.brand_id);
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products/`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// UPDATE PRODUCT
+export async function updateProduct(
+  data: {
+    name: string;
+    price: string;
+    origin: string;
+    description: string;
+    category_id: string;
+    brand_id: string;
+    product_image: File | null;
+    product_images: File[] | [];
+    removed_image_ids: string[];
+  },
+  id: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    const formData = new FormData();
+    if (data.product_image) {
+      formData.append("product_image", data.product_image);
+    }
+    if (data.product_images) {
+      data.product_images.forEach((image) => {
+        formData.append("product_images", image);
+      });
+    }
+
+    formData.append("name", data.name);
+    formData.append("price", data.price);
+    formData.append("origin", data.origin);
+    formData.append("description", data.description);
+    formData.append("category_id", data.category_id);
+    formData.append("brand_id", data.brand_id);
+    formData.append(
+      "removed_image_ids",
+      JSON.stringify(data.removed_image_ids)
+    );
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// DELETE PRODUCT
+export async function deleteProduct(id: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// UPDATE PRODUCT
+export async function updateProductImage(
+  data: {
+    product_image: File;
+  },
+  id: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    const formData = new FormData();
+    if (data.product_image) {
+      formData.append("product_image", data.product_image);
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/product_image/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// DELETE CATEGORY
+export async function deleteProductImage(id: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/product_image/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL VARIANT
+export async function getAllVariantByProductId(productId: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}/variants/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE RAM
+export async function createVariant(data: {
+  name: string;
+  stock_quantity: number;
+  price: number;
+  color_id: string;
+  ram_id: string;
+  rom_id: string;
+  product_id: string;
+}): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/variants/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// UPDATE RAM
+export async function updateVariant(
+  data: {
+    name: string;
+    stock_quantity: number;
+    price: number;
+    color_id: string;
+    ram_id: string;
+    rom_id: string;
+    product_id: string;
+  },
+  variantId: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/variants/${variantId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// DELETE RAM
+export async function deleteVariant(variantId: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/variants/${variantId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL VARIANT
+export async function getAllCartItem(userId: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/carts`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE RAM
+// export async function createVariant(data: {
+//   name: string;
+//   stock_quantity: number;
+//   price: number;
+//   color_id: string;
+//   ram_id: string;
+//   rom_id: string;
+//   product_id: string;
+// }): Promise<{
+//   success: boolean;
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   data?: any;
+//   message?: string;
+// }> {
+//   try {
+//     const token = Cookies.get("session");
+
+//     if (!token) {
+//       return { success: false, message: "Không tìm thấy mã xác thực" };
+//     }
+
+//     // Gửi yêu cầu đến API để lấy thông tin người dùng
+//     const response = await fetch(
+//       `${process.env.NEXT_PUBLIC_API_URL}/api/variants/`,
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`, // Đặt trong headers
+//         },
+//         body: JSON.stringify(data),
+//       }
+//     );
+
+//     const result = await response.json();
+
+//     // Kiểm tra nếu phản hồi thành công
+//     if (response.ok) {
+//       return {
+//         success: true,
+//         data: result.data,
+//         message: "Tạo mới thành công",
+//       };
+//     } else {
+//       return {
+//         success: false,
+//         message: result.message || "Có lỗi xảy ra",
+//       };
+//     }
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//   } catch (error) {
+//     return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+//   }
+// }
+
+// // UPDATE RAM
+// export async function updateVariant(
+//   data: {
+//     name: string;
+//     stock_quantity: number;
+//     price: number;
+//     color_id: string;
+//     ram_id: string;
+//     rom_id: string;
+//     product_id: string;
+//   },
+//   variantId: string
+// ): Promise<{
+//   success: boolean;
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   data?: any;
+//   message?: string;
+// }> {
+//   try {
+//     const token = Cookies.get("session");
+
+//     if (!token) {
+//       return { success: false, message: "Không tìm thấy mã xác thực" };
+//     }
+
+//     // Gửi yêu cầu đến API để lấy thông tin người dùng
+//     const response = await fetch(
+//       `${process.env.NEXT_PUBLIC_API_URL}/api/variants/${variantId}`,
+//       {
+//         method: "PATCH",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`, // Đặt trong headers
+//         },
+//         body: JSON.stringify(data),
+//       }
+//     );
+
+//     const result = await response.json();
+
+//     // Kiểm tra nếu phản hồi thành công
+//     if (response.ok) {
+//       return {
+//         success: true,
+//         data: result.data,
+//         message: "Cập nhật thành công",
+//       };
+//     } else {
+//       return {
+//         success: false,
+//         message: result.message || "Có lỗi xảy ra",
+//       };
+//     }
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//   } catch (error) {
+//     return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+//   }
+// }
+
+// // DELETE RAM
+// export async function deleteVariant(variantId: string): Promise<{
+//   success: boolean;
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   data?: any;
+//   message?: string;
+// }> {
+//   try {
+//     const token = Cookies.get("session");
+
+//     if (!token) {
+//       return { success: false, message: "Không tìm thấy mã xác thực" };
+//     }
+
+//     // Gửi yêu cầu đến API để lấy thông tin người dùng
+//     const response = await fetch(
+//       `${process.env.NEXT_PUBLIC_API_URL}/api/variants/${variantId}`,
+//       {
+//         method: "DELETE",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`, // Đặt trong headers
+//         },
+//       }
+//     );
+
+//     const result = await response.json();
+
+//     // Kiểm tra nếu phản hồi thành công
+//     if (response.ok) {
+//       return {
+//         success: true,
+//         data: result.data,
+//         message: "Xóa thành công",
+//       };
+//     } else {
+//       return {
+//         success: false,
+//         message: result.message || "Có lỗi xảy ra",
+//       };
+//     }
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//   } catch (error) {
+//     return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+//   }
+// }

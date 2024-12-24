@@ -22,12 +22,18 @@ import { LuShieldCheck } from "react-icons/lu";
 import { MdOutlineLocalShipping } from "react-icons/md";
 import { IoLogoApple } from "react-icons/io";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import SaleProduct from "./SaleProduct";
 import ProductGrid from "./ProductGrid";
 import Link from "next/link";
+import { getAllProduct, getOutStandingProduct } from "@/lib";
+import Loading from "../Loading";
 
 const DashboardPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [product, setProduct] = useState<Product[]>([]);
+  const [outstandingProduct, setOutStandingProduct] = useState<Product[]>([]);
+
   const plugin = useRef(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Autoplay({ delay: 2000, stopOnMouseEnter: true }) as any
@@ -41,6 +47,18 @@ const DashboardPage: React.FC = () => {
   const handleMouseLeave = () => {
     plugin.current?.play(); // Sử dụng reset() thay vì start()
   };
+
+  useEffect(() => {
+    const fectchData = async () => {
+      setIsLoading(true);
+      const result = await getAllProduct();
+      setProduct(result.data.products);
+      const result1 = await getOutStandingProduct();
+      setOutStandingProduct(result1.data.products);
+      setIsLoading(false);
+    };
+    fectchData();
+  }, []);
 
   return (
     <div className="max-w-[1280px] mx-auto h-fit">
@@ -103,7 +121,7 @@ const DashboardPage: React.FC = () => {
 
       {/* Sale Product */}
       <div>
-        <SaleProduct />
+        <SaleProduct products={outstandingProduct} isLoading={isLoading} />
       </div>
 
       {/* logo business */}
@@ -152,7 +170,13 @@ const DashboardPage: React.FC = () => {
             })}
           </div>
         </div>
-        <ProductGrid products={products} />
+        {isLoading ? (
+          <div className=" h-[400px]">
+            <Loading fullWeb={false} />
+          </div>
+        ) : (
+          <ProductGrid products={product} />
+        )}
       </div>
     </div>
   );
@@ -201,194 +225,194 @@ const phoneBrands = [
   { title: "nokia", link: "/product/nokia" },
 ];
 
-const products = [
-  {
-    img: "/product_1.jpg",
-    name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-    price: 630000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_2.jpg",
-    name: "Laptop Apple MacBook Air",
-    price: 63000000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_3.jpg",
-    name: "Đồng hồ thông minh BeFit Hunter2",
-    price: 2300000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_1.jpg",
-    name: "Laptop Asus Vivobook 15",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_4.jpg",
-    name: "Điện thoại OPPO Reno10 Pro",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_5.jpg",
-    name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_6.jpg",
-    name: "Laptop Asus Vivobook 15",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_1.jpg",
-    name: "Laptop Asus Vivobook 15",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_4.jpg",
-    name: "Điện thoại OPPO Reno10 Pro",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_5.jpg",
-    name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_6.jpg",
-    name: "Laptop Asus Vivobook 15",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_5.jpg",
-    name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_6.jpg",
-    name: "Laptop Asus Vivobook 15",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_1.jpg",
-    name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-    price: 630000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_2.jpg",
-    name: "Laptop Apple MacBook Air",
-    price: 63000000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_3.jpg",
-    name: "Đồng hồ thông minh BeFit Hunter2",
-    price: 2300000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_1.jpg",
-    name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-    price: 630000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_2.jpg",
-    name: "Laptop Apple MacBook Air",
-    price: 63000000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_3.jpg",
-    name: "Đồng hồ thông minh BeFit Hunter2",
-    price: 2300000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_1.jpg",
-    name: "Laptop Asus Vivobook 15",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-  {
-    img: "/product_4.jpg",
-    name: "Điện thoại OPPO Reno10 Pro",
-    price: 1220000,
-    star: 4,
-    num_review: 10,
-    category_slug: "maytinh",
-    product_slug: "maytinh1",
-  },
-];
+// const products = [
+//   {
+//     img: "/product_1.jpg",
+//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
+//     price: 630000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_2.jpg",
+//     name: "Laptop Apple MacBook Air",
+//     price: 63000000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_3.jpg",
+//     name: "Đồng hồ thông minh BeFit Hunter2",
+//     price: 2300000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_1.jpg",
+//     name: "Laptop Asus Vivobook 15",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_4.jpg",
+//     name: "Điện thoại OPPO Reno10 Pro",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_5.jpg",
+//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_6.jpg",
+//     name: "Laptop Asus Vivobook 15",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_1.jpg",
+//     name: "Laptop Asus Vivobook 15",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_4.jpg",
+//     name: "Điện thoại OPPO Reno10 Pro",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_5.jpg",
+//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_6.jpg",
+//     name: "Laptop Asus Vivobook 15",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_5.jpg",
+//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_6.jpg",
+//     name: "Laptop Asus Vivobook 15",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_1.jpg",
+//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
+//     price: 630000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_2.jpg",
+//     name: "Laptop Apple MacBook Air",
+//     price: 63000000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_3.jpg",
+//     name: "Đồng hồ thông minh BeFit Hunter2",
+//     price: 2300000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_1.jpg",
+//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
+//     price: 630000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_2.jpg",
+//     name: "Laptop Apple MacBook Air",
+//     price: 63000000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_3.jpg",
+//     name: "Đồng hồ thông minh BeFit Hunter2",
+//     price: 2300000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_1.jpg",
+//     name: "Laptop Asus Vivobook 15",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+//   {
+//     img: "/product_4.jpg",
+//     name: "Điện thoại OPPO Reno10 Pro",
+//     price: 1220000,
+//     star: 4,
+//     num_review: 10,
+//     category_slug: "maytinh",
+//     product_slug: "maytinh1",
+//   },
+// ];

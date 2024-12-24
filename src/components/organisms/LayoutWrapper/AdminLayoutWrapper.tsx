@@ -115,9 +115,9 @@ const AdminLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
         <SidebarAdmin menuItems={menuItems} />
       </div>
       {/* RIGHT */}
-      <div className="w-full bg-neutral-100 overflow-y-scroll">
+      <div className="w-full bg-neutral-100 overflow-y-scroll ">
         <HeaderAdmin />
-        <main>{children}</main>
+        <main className="h-fit">{children}</main>
       </div>
     </div>
   );

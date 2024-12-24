@@ -27,7 +27,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
 }) => {
   const pathname = usePathname();
   return (
-    <div className="flex flex-col p-4 gap-4 w-fit justify-center">
+    <div className="flex flex-col p-4 gap-4 w-fit justify-center sticky top-0">
       {!isUserInfoPage && (
         <Link
           href="/dashboard-admin"
