@@ -3,6 +3,7 @@ import { Sarabun } from "next/font/google";
 import "../globals.css";
 import NormalLayoutWrapper from "@/components/organisms/LayoutWrapper/NormalLayoutWrapper";
 import { Toaster } from "@/components/ui/sonner";
+import Snowfall from "@/components/ui/SnowFall";
 
 const sarabun = Sarabun({
   weight: ["400", "500"],
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={sarabun.className}>
         <Toaster position="top-center" />
+        <Snowfall />
         <NormalLayoutWrapper>{children}</NormalLayoutWrapper>
       </body>
     </html>

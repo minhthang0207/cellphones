@@ -24,7 +24,7 @@ interface Brand_Product {
 
 interface Category_Product {
   id: string;
-  name: string;
+  name?: string;
   slug: string;
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,10 +42,16 @@ interface Variant_Product {
   color_id: string;
   ram_id: string;
   rom_id: string;
+  Product: ProductMainImage;
   product_id: string;
   createdAt: string;
   updatedAt: string;
   Color: Color;
   Ram: Ram;
   Rom: Rom;
+}
+
+interface ProductMainImage {
+  name: string;
+  image: string;
 }

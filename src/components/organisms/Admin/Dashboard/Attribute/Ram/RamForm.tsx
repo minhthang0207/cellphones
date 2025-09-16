@@ -22,7 +22,7 @@ const RamForm: React.FC = () => {
     setSelectedItem(ram);
     setIsEdit(true);
     setCapacity(ram.capacity.toString());
-    setDescription(ram.description);
+    setDescription(ram.description || "");
   };
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {

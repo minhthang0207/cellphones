@@ -22,7 +22,7 @@ const RomForm: React.FC = () => {
     setSelectedItem(rom);
     setIsEdit(true);
     setCapacity(rom.capacity.toString());
-    setDescription(rom.description);
+    setDescription(rom.description || "");
   };
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {

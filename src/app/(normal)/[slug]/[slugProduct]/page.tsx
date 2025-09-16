@@ -15,32 +15,38 @@ const SingleProductPage = async ({
 
   // Lấy dữ liệu sản phẩm từ hàm getProduct
   const result = await getProductBySlug(slugProduct);
-  console.log(result);
 
   const colors = [
     ...new Set(
-      result.data.variants.map((variant: Variant) => variant.Color.id)
+      result.data.variants.map((variant: Variant_Product) => variant.Color.id)
     ),
   ].map(
     (id) =>
-      result.data.variants.find((variant: Variant) => variant.Color.id === id)
-        ?.Color
+      result.data.variants.find(
+        (variant: Variant_Product) => variant.Color.id === id
+      )?.Color
   );
 
   const rams = [
-    ...new Set(result.data.variants.map((variant: Variant) => variant.Ram.id)),
+    ...new Set(
+      result.data.variants.map((variant: Variant_Product) => variant.Ram.id)
+    ),
   ].map(
     (id) =>
-      result.data.variants.find((variant: Variant) => variant.Ram.id === id)
-        ?.Ram
+      result.data.variants.find(
+        (variant: Variant_Product) => variant.Ram.id === id
+      )?.Ram
   );
 
   const roms = [
-    ...new Set(result.data.variants.map((variant: Variant) => variant.Rom.id)),
+    ...new Set(
+      result.data.variants.map((variant: Variant_Product) => variant.Rom.id)
+    ),
   ].map(
     (id) =>
-      result.data.variants.find((variant: Variant) => variant.Rom.id === id)
-        ?.Rom
+      result.data.variants.find(
+        (variant: Variant_Product) => variant.Rom.id === id
+      )?.Rom
   );
 
   // Kiểm tra nếu sản phẩm không tồn tại hoặc slug không khớp
@@ -58,7 +64,6 @@ const SingleProductPage = async ({
       listRom={roms}
     />
   );
-  return <div>12</div>;
 };
 
 export default SingleProductPage;

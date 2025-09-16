@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { ItemCheckout } from "./types/cart";
 
 // LOGIN
 export async function login(
@@ -494,7 +495,7 @@ export async function updateBrand(
   }
 }
 
-// UPDATE BRAND
+// DELETE BRAND
 export async function deleteBrand(id: string): Promise<{
   success: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1344,7 +1345,9 @@ interface Filter {
 export async function getFilteredProduct(
   sortOrder: string,
   categorySlug: string,
-  filters?: Filter
+  filters?: Filter,
+  limit?: number,
+  currentPage?: number
 ): Promise<{
   success: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1353,10 +1356,6 @@ export async function getFilteredProduct(
 }> {
   try {
     const token = Cookies.get("session");
-
-    if (!token) {
-      return { success: false, message: "Không tìm thấy mã xác thực" };
-    }
 
     const filterList: URLSearchParams = new URLSearchParams();
     if (filters) {
@@ -1375,6 +1374,12 @@ export async function getFilteredProduct(
 
       if (filters.rom && filters.rom?.length > 0) {
         filterList.append("rom", filters.rom.join(","));
+      }
+      if (limit) {
+        filterList.append("limit", limit.toString());
+      }
+      if (currentPage) {
+        filterList.append("page", currentPage.toString());
       }
     }
 
@@ -1469,7 +1474,10 @@ export async function getProductBySlug(productSlug: string): Promise<{
 }
 
 // GET PRODUCT BY CATEGORY
-export async function getProductByCategorySlug(categorySlug: string): Promise<{
+export async function getProductByCategorySlug(
+  categorySlug: string,
+  limit: number
+): Promise<{
   success: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
@@ -1478,13 +1486,9 @@ export async function getProductByCategorySlug(categorySlug: string): Promise<{
   try {
     const token = Cookies.get("session");
 
-    if (!token) {
-      return { success: false, message: "Không tìm thấy mã xác thực" };
-    }
-
     // Gửi yêu cầu đến API để lấy thông tin người dùng
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/products?categorySlug=${categorySlug}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products?categorySlug=${categorySlug}&limit=${limit}`,
       {
         method: "GET",
         headers: {
@@ -1523,10 +1527,6 @@ export async function getOutStandingProduct(): Promise<{
 }> {
   try {
     const token = Cookies.get("session");
-
-    if (!token) {
-      return { success: false, message: "Không tìm thấy mã xác thực" };
-    }
 
     // Gửi yêu cầu đến API để lấy thông tin người dùng
     const response = await fetch(
@@ -2164,7 +2164,7 @@ export async function deleteVariant(variantId: string): Promise<{
   }
 }
 
-// GET ALL VARIANT
+// GET ALL CART ITEM
 export async function getAllCartItem(userId: string): Promise<{
   success: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -2210,164 +2210,512 @@ export async function getAllCartItem(userId: string): Promise<{
   }
 }
 
-// CREATE RAM
-// export async function createVariant(data: {
-//   name: string;
-//   stock_quantity: number;
-//   price: number;
-//   color_id: string;
-//   ram_id: string;
-//   rom_id: string;
-//   product_id: string;
-// }): Promise<{
-//   success: boolean;
-//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   data?: any;
-//   message?: string;
-// }> {
-//   try {
-//     const token = Cookies.get("session");
+// CREATE CART ITEM
+export async function createCartItem(
+  userId: string,
+  variantId: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
 
-//     if (!token) {
-//       return { success: false, message: "Không tìm thấy mã xác thực" };
-//     }
+    if (!token) {
+      return {
+        success: false,
+        message: "Vui lòng đăng nhập để thực hiện thao tác này",
+      };
+    }
 
-//     // Gửi yêu cầu đến API để lấy thông tin người dùng
-//     const response = await fetch(
-//       `${process.env.NEXT_PUBLIC_API_URL}/api/variants/`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`, // Đặt trong headers
-//         },
-//         body: JSON.stringify(data),
-//       }
-//     );
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/carts`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          variant_id: variantId,
+          quantity: 1,
+        }),
+      }
+    );
 
-//     const result = await response.json();
+    const result = await response.json();
 
-//     // Kiểm tra nếu phản hồi thành công
-//     if (response.ok) {
-//       return {
-//         success: true,
-//         data: result.data,
-//         message: "Tạo mới thành công",
-//       };
-//     } else {
-//       return {
-//         success: false,
-//         message: result.message || "Có lỗi xảy ra",
-//       };
-//     }
-//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   } catch (error) {
-//     return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
-//   }
-// }
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
 
-// // UPDATE RAM
-// export async function updateVariant(
-//   data: {
-//     name: string;
-//     stock_quantity: number;
-//     price: number;
-//     color_id: string;
-//     ram_id: string;
-//     rom_id: string;
-//     product_id: string;
-//   },
-//   variantId: string
-// ): Promise<{
-//   success: boolean;
-//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   data?: any;
-//   message?: string;
-// }> {
-//   try {
-//     const token = Cookies.get("session");
+// UPDATE CART ITEM
+export async function updateCartItem(
+  itemId: string,
+  quantity: number
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
 
-//     if (!token) {
-//       return { success: false, message: "Không tìm thấy mã xác thực" };
-//     }
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
 
-//     // Gửi yêu cầu đến API để lấy thông tin người dùng
-//     const response = await fetch(
-//       `${process.env.NEXT_PUBLIC_API_URL}/api/variants/${variantId}`,
-//       {
-//         method: "PATCH",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`, // Đặt trong headers
-//         },
-//         body: JSON.stringify(data),
-//       }
-//     );
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/carts/${itemId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify({ quantity }),
+      }
+    );
 
-//     const result = await response.json();
+    const result = await response.json();
 
-//     // Kiểm tra nếu phản hồi thành công
-//     if (response.ok) {
-//       return {
-//         success: true,
-//         data: result.data,
-//         message: "Cập nhật thành công",
-//       };
-//     } else {
-//       return {
-//         success: false,
-//         message: result.message || "Có lỗi xảy ra",
-//       };
-//     }
-//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   } catch (error) {
-//     return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
-//   }
-// }
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
 
-// // DELETE RAM
-// export async function deleteVariant(variantId: string): Promise<{
-//   success: boolean;
-//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   data?: any;
-//   message?: string;
-// }> {
-//   try {
-//     const token = Cookies.get("session");
+// DELETE CART ITEM
+export async function deleteCartItem(itemId: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
 
-//     if (!token) {
-//       return { success: false, message: "Không tìm thấy mã xác thực" };
-//     }
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
 
-//     // Gửi yêu cầu đến API để lấy thông tin người dùng
-//     const response = await fetch(
-//       `${process.env.NEXT_PUBLIC_API_URL}/api/variants/${variantId}`,
-//       {
-//         method: "DELETE",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`, // Đặt trong headers
-//         },
-//       }
-//     );
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/carts/${itemId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
 
-//     const result = await response.json();
+    const result = await response.json();
 
-//     // Kiểm tra nếu phản hồi thành công
-//     if (response.ok) {
-//       return {
-//         success: true,
-//         data: result.data,
-//         message: "Xóa thành công",
-//       };
-//     } else {
-//       return {
-//         success: false,
-//         message: result.message || "Có lỗi xảy ra",
-//       };
-//     }
-//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   } catch (error) {
-//     return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
-//   }
-// }
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ALL ORDER
+export async function getAllOrder(): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/orders`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ORDER BY USER ID
+export async function getAllOrderByUserId(
+  userId: string,
+  value: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/orders?status=${value}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// GET ORDER BY ORDER ID
+export async function getOrderByOrderId(orderId: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE ORDER
+export async function createOrder(
+  items: ItemCheckout[],
+  totalAmount: number,
+  paymentMethod: string,
+  userId: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/orders`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify({
+          items,
+          totalAmount,
+          paymentMethod,
+          userId,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// UPDATE ORDER
+export async function updateOrder(data: {
+  orderId: string;
+  status?: string;
+  payment_status?: string;
+}): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${data.orderId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Cập nhật thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// DELETE ORDER
+export async function deleteOrder(orderId: string): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Xóa thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}
+
+// CREATE PAYMENT
+export async function createPayment(
+  items: ItemCheckout[],
+  totalAmount: number,
+  userId: string
+): Promise<{
+  success: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  message?: string;
+}> {
+  try {
+    const token = Cookies.get("session");
+
+    if (!token) {
+      return { success: false, message: "Không tìm thấy mã xác thực" };
+    }
+
+    // Gửi yêu cầu đến API để lấy thông tin người dùng
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/payment`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Đặt trong headers
+        },
+        body: JSON.stringify({
+          items,
+          totalAmount,
+          userId,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    // Kiểm tra nếu phản hồi thành công
+    if (response.ok) {
+      return {
+        success: true,
+        data: result.data,
+        message: "Tạo mới thành công",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.message || "Có lỗi xảy ra",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại sau!" };
+  }
+}

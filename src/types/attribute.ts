@@ -20,7 +20,7 @@ interface Color {
   id: string;
   name: string;
   code: string;
-  slug: string;
+  slug?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -28,8 +28,8 @@ interface Color {
 interface Ram {
   id: string;
   capacity: number;
-  description: string;
-  slug: string;
+  description?: string;
+  slug?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -37,8 +37,8 @@ interface Ram {
 interface Rom {
   id: string;
   capacity: number;
-  description: string;
-  slug: string;
+  description?: string;
+  slug?: string;
   createdAt?: string;
   updatedAt?: string;
 }

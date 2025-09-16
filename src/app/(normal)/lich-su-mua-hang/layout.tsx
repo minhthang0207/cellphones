@@ -3,6 +3,8 @@ import { CiLogout } from "react-icons/ci";
 import { FaRegFileLines, FaHouseUser } from "react-icons/fa6";
 import SidebarAdmin from "@/components/organisms/SidebarAdmin";
 import { useUserStore } from "@/store/user";
+import useCartStore from "@/store/cart";
+import useWishlistStore from "@/store/wishlist";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
 import Cookies from "js-cookie";
@@ -13,18 +15,29 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
-  const addUser = useUserStore((state) => state.addUser);
   const handleLogout = () => {
     Cookies.remove("session");
-    addUser({} as User);
+
+    // Reset Zustand store về default
+    useUserStore.persist.clearStorage();
+    useCartStore.persist.clearStorage();
+    useWishlistStore.persist.clearStorage();
+     // Đồng thời clear state trong memory (nếu muốn)
+    useUserStore.setState({ user: {} as User });
+    useCartStore.setState({ cart: [] });
+    useWishlistStore.setState({ wishlist: [] });
     router.push("/");
   };
   return (
     <div className=" flex justify-center mx-auto w-full max-w-[1280px] h-fit">
       {/* left */}
       <div className="border-r pr-4 bg-white">
-        <div className="h-full flex flex-col gap-8">
-          <SidebarAdmin menuItems={menuItems} isUserInfoPage={true} />
+        <div className="h-full flex flex-col gap-8 ">
+          <SidebarAdmin
+            menuItems={menuItems}
+            isUserInfoPage={true}
+            isSticky={false}
+          />
           <button
             type="button"
             className="flex justify-center mb-4 rounded-lg items-center gap-2  p-2 text-red-500 border border-red-400 hover:text-white hover:bg-red-400 transition duration-300"
@@ -35,7 +48,7 @@ export default function Layout({
         </div>
       </div>
       {/* right */}
-      <section className="flex-1 mt-6 pl-4 h-fit">{children}</section>
+      <section className="flex-1 my-6 pl-4 h-fit">{children}</section>
     </div>
   );
 }

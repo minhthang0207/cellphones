@@ -13,17 +13,18 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { IoIosHappy } from "react-icons/io";
 import { CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaShoppingCart, FaStar } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { IoIosArrowBack } from "react-icons/io";
+import useCartStore from "@/store/cart";
+import { useUserStore } from "@/store/user";
+import { toast } from "sonner";
+import ReviewProduct from "./ReviewProduct";
 
 interface SingleProductFormProps {
   product: Product;
@@ -53,9 +54,38 @@ const SingleProductForm: React.FC<SingleProductFormProps> = ({
   const [selectedRam, setSelectedRam] = useState<Ram | null>(null);
   const [listRom, setListRom] = useState<Rom[]>([]);
   const [selectedRom, setSelectedRom] = useState<Rom | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
-  console.log("selectedRAm", selectedRam);
-  console.log("selectedRom", selectedRom);
+  const [selectedVariant, setSelectedVariant] =
+    useState<Variant_Product | null>(null);
+  const router = useRouter();
+
+  const user = useUserStore((state) => state.user);
+  const addToCart = useCartStore((state) => state.addToCart);
+
+  const handleAddToCart = async () => {
+    if (!user.id) {
+      toast.error("Vui lòng đăng nhập để thực hiện chức năng này");
+      return;
+    }
+    if (selectedVariant) {
+      const result = await addToCart(user.id, selectedVariant);
+      if (result.success) {
+        toast.success("Thêm giỏ hàng thành công");
+      } else {
+        toast.error(result.message);
+      }
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!user.id) {
+      toast.error("Vui lòng đăng nhập để thực hiện chức năng này");
+      return;
+    }
+    if (selectedVariant) {
+      await addToCart(user.id, selectedVariant);
+      router.push(`/gio-hang?product=${selectedVariant.id}`);
+    }
+  };
 
   useEffect(() => {
     if (listColor.length > 0) {
@@ -179,6 +209,28 @@ const SingleProductForm: React.FC<SingleProductFormProps> = ({
     };
   }, [api]);
 
+  if (variants.length === 0) {
+    return (
+      <div className="bg-neutral-100 pt-8 pb-8 rounded-lg">
+        <div className="max-w-[1280px] h-[400px] flex flex-col  items-center justify-center gap-4 mx-auto bg-white rounded-lg ">
+          <p className="text-center text-2xl font-semibold ">
+            Sản phẩm này hiện chưa mở bán
+          </p>
+          <p className="text-center text-base flex items-center gap-2 justify-center">
+            Vui lòng quay lại sau{" "}
+            <IoIosHappy size={20} className="text-red-600" />
+          </p>
+          <button
+            onClick={() => router.back()}
+            className="underline text-base text-red-500 flex items-center gap-2 mt-4"
+          >
+            <IoIosArrowBack size={20} />
+            Quay lại
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-neutral-100 pt-8 pb-8 rounded-lg ">
       <div className="max-w-[1280px] flex gap-4 flex-col mx-auto bg-white rounded-lg ">
@@ -253,7 +305,7 @@ const SingleProductForm: React.FC<SingleProductFormProps> = ({
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg p-4">
+            {/* <div className="bg-white rounded-lg p-4">
               <p>Thông số kỹ thuật</p>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
@@ -277,7 +329,11 @@ const SingleProductForm: React.FC<SingleProductFormProps> = ({
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </div>
+            </div> */}
+
+            {/* review */}
+
+            <ReviewProduct productId={product.id} />
           </div>
 
           {/* col2 */}
@@ -404,6 +460,7 @@ const SingleProductForm: React.FC<SingleProductFormProps> = ({
                 <button
                   type="button"
                   className="flex flex-col items-center p-1 w-1/2 border border-red-500 bg-white text-red-500 text-base rounded-lg"
+                  onClick={handleAddToCart}
                 >
                   <FaShoppingCart size={18} />
                   Thêm vào giỏ hàng
@@ -411,6 +468,7 @@ const SingleProductForm: React.FC<SingleProductFormProps> = ({
                 <button
                   type="button"
                   className="flex justify-center items-center p-1 w-1/2 bg-red-500 text-white text-base rounded-lg hover:bg-red-400 transition duration-300"
+                  onClick={handleBuyNow}
                 >
                   Mua ngay
                 </button>

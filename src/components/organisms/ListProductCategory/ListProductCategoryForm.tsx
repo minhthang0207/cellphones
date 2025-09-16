@@ -1,16 +1,19 @@
 "use client";
 import FilterModal from "@/components/organisms/ListProductCategory/FilterModal";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ProductGrid from "../Dashboard/ProductGrid";
-import { getFilteredProduct, getProductByCategorySlug } from "@/lib";
+import { getFilteredProduct } from "@/lib";
 import Loading from "../Loading";
+import { useSearchParams } from "next/navigation";
+
+import PaginationComponent from "./PaginationComponent";
 
 interface SelectedFilters {
-  brand?: string[];
-  price?: string[];
-  screenSize?: string[];
-  ram?: string[];
-  rom?: string[];
+  brand: string[];
+  price: string[];
+  screenSize: string[];
+  ram: string[];
+  rom: string[];
 }
 
 interface ListProductCategoryFormProps {
@@ -20,6 +23,8 @@ interface ListProductCategoryFormProps {
 const ListProductCategoryForm: React.FC<ListProductCategoryFormProps> = ({
   slug,
 }) => {
+  const searchParams = useSearchParams(); // Lấy query params từ URL
+  const brandParams = searchParams.get("brand");
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
@@ -31,9 +36,12 @@ const ListProductCategoryForm: React.FC<ListProductCategoryFormProps> = ({
   });
 
   const [sortOrder, setSortOrder] = useState<string>("");
-  console.log(sortOrder);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [limit, setLimit] = useState(20);
 
-  const handleFilterClick = (
+  const handleFilterClick = async (
     category: keyof SelectedFilters,
     value: string
   ) => {
@@ -51,36 +59,80 @@ const ListProductCategoryForm: React.FC<ListProductCategoryFormProps> = ({
       newFilters[category]?.push(value);
     }
     setSelectedFilters(newFilters);
+    const isAllFiltersEmpty = Object.values(newFilters).every(
+      (filter) => filter.length === 0
+    );
+
+    if (isAllFiltersEmpty) {
+      setIsLoading(true);
+      setCurrentPage(1);
+      const result = await getFilteredProduct(
+        sortOrder,
+        slug,
+        newFilters,
+        limit,
+        1
+      );
+      setProducts(result.data.products);
+      setTotalPages(result.data.totalPages);
+      setIsLoading(false);
+    }
   };
 
   const handleDeleteAllFilter = async () => {
-    setSelectedFilters({
+    const newSelectedFilter = {
       brand: [],
       price: [],
       screenSize: [],
       ram: [],
       rom: [],
-    });
+    };
+    setSelectedFilters(newSelectedFilter);
     setIsLoading(true);
-    const result = await getProductByCategorySlug(slug);
+    setCurrentPage(1);
+    const result = await getFilteredProduct(
+      sortOrder,
+      slug,
+      newSelectedFilter,
+      limit,
+      1
+    );
     setProducts(result.data.products);
+    setTotalPages(result.data.totalPages);
     setIsLoading(false);
   };
 
   const handleSumbitResult = async () => {
     setIsLoading(true);
-    const result = await getFilteredProduct(sortOrder, slug, selectedFilters);
+    setCurrentPage(1);
+    const result = await getFilteredProduct(
+      sortOrder,
+      slug,
+      selectedFilters,
+      limit,
+      1
+    );
     setProducts(result.data.products);
+    setTotalPages(result.data.totalPages);
     setIsLoading(false);
   };
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    const result = await getFilteredProduct(sortOrder, slug);
-    setProducts(result.data.products);
-    setIsLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
+  const handlePageChange = async (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setIsLoading(true);
+      setCurrentPage(page);
+      const result = await getFilteredProduct(
+        sortOrder,
+        slug,
+        selectedFilters,
+        limit,
+        page
+      );
+      setProducts(result.data.products);
+      setTotalPages(result.data.totalPages);
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     handleSumbitResult();
@@ -88,21 +140,35 @@ const ListProductCategoryForm: React.FC<ListProductCategoryFormProps> = ({
   }, [sortOrder]);
 
   useEffect(() => {
-    // Kiểm tra nếu tất cả các mảng trong selectedFilters đều rỗng
-    const isAllFiltersEmpty = Object.values(selectedFilters).every(
-      (filter) => filter.length === 0
-    );
-
-    if (isAllFiltersEmpty) {
-      fetchData(); // Gọi API khi tất cả bộ lọc đều rỗng
+    const newFilters = { ...selectedFilters };
+    if (brandParams && !newFilters.brand.includes(brandParams)) {
+      newFilters.brand.push(brandParams);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters, slug]);
 
-  // useEffect để gọi fetchData ban đầu
-  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+
+      try {
+        setCurrentPage(1);
+        const result = await getFilteredProduct(
+          sortOrder,
+          slug,
+          newFilters,
+          limit,
+          1
+        );
+        setProducts(result.data.products);
+        setTotalPages(result.data.totalPages);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchData();
-  }, [fetchData]);
+  }, [slug, brandParams, limit, sortOrder, selectedFilters]);
+
   return (
     <div className="bg-neutral-100">
       <div className="bg-white max-w-[1280px] mx-auto p-4 rounded-lg">
@@ -149,6 +215,13 @@ const ListProductCategoryForm: React.FC<ListProductCategoryFormProps> = ({
             <ProductGrid products={products} />
           )}
         </div>
+        {/* pagination */}
+        {/* Phân trang */}
+        <PaginationComponent
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageChange={handlePageChange}
+        />
       </div>
     </div>
   );
@@ -157,14 +230,16 @@ const ListProductCategoryForm: React.FC<ListProductCategoryFormProps> = ({
 export default ListProductCategoryForm;
 
 const filterConfig: FilterConfig = {
-  "/maytinh12": {
+  "/laptop": {
     brand: {
       title: "Thương hiệu",
       options: [
         { text: "Acer", value: "acer" },
-        { text: "Iphone", value: "iphone123" },
-        { text: "asus", value: "asus" },
+        { text: "Macbook", value: "apple" },
+        { text: "Asus", value: "asus" },
+        { text: "Dell", value: "dell" },
         { text: "Lenovo", value: "lenovo" },
+        { text: "HP", value: "hp" },
       ],
     },
     price: {
@@ -204,21 +279,60 @@ const filterConfig: FilterConfig = {
       ],
     },
   },
-  "/dtdd": {
+  "/dien-thoai": {
     brand: {
       title: "Thương hiệu",
       options: [
-        { text: "Apple", value: "apple" },
+        { text: "Iphone", value: "apple" },
         { text: "Samsung", value: "samsung" },
         { text: "Xiaomi", value: "xiaomi" },
+        { text: "Huawei", value: "huawei" },
       ],
     },
     price: {
       title: "Giá",
       options: [
-        { text: "Dưới 5 triệu", value: "duoi-5-trieu" },
-        { text: "5 - 10 triệu", value: "5-10-trieu" },
-        { text: "Trên 10 triệu", value: "tren-10-trieu" },
+        { text: "Dưới 5 triệu", value: "<5000000" },
+        { text: "5 - 10 triệu", value: "5000000-10000000" },
+        { text: "Trên 10 triệu", value: ">10000000" },
+      ],
+    },
+    ram: {
+      title: "RAM",
+      options: [
+        { text: "4GB", value: "4gb" },
+        { text: "6GB", value: "6gb" },
+        { text: "8GB", value: "8gb" },
+        { text: "12GB", value: "12gb" },
+      ],
+    },
+    rom: {
+      title: "Dung lượng lưu trữ",
+      options: [
+        { text: "64GB", value: "64gb" },
+        { text: "128GB", value: "128gb" },
+        { text: "256GB", value: "256gb" },
+        { text: "512GB", value: "512gb" },
+      ],
+    },
+  },
+  "/may-tinh-bang": {
+    brand: {
+      title: "Thương hiệu",
+      options: [
+        { text: "Ipad", value: "apple" },
+        { text: "Samsung", value: "samsung" },
+        { text: "Xiaomi", value: "xiaomi" },
+        { text: "Huawei", value: "huawei" },
+      ],
+    },
+    price: {
+      title: "Giá",
+      options: [
+        { text: "Dưới 5 triệu", value: "<5000000" },
+        { text: "5 - 10 triệu", value: "5000000-10000000" },
+        { text: "10 - 20 triệu", value: "10000000-20000000" },
+        { text: "Trên 20 triệu", value: ">20000000" },
       ],
     },
     ram: {
@@ -256,195 +370,3 @@ const listSortOrder = [
     value: "gia-giam-dan",
   },
 ];
-
-// const products = [
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-// ];

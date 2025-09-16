@@ -26,13 +26,18 @@ import { useEffect, useRef, useState } from "react";
 import SaleProduct from "./SaleProduct";
 import ProductGrid from "./ProductGrid";
 import Link from "next/link";
-import { getAllProduct, getOutStandingProduct } from "@/lib";
+import { getOutStandingProduct, getProductByCategorySlug } from "@/lib";
 import Loading from "../Loading";
+import UserChat from "../Chatbox/Chat";
+import { useUserStore } from "@/store/user";
 
 const DashboardPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [product, setProduct] = useState<Product[]>([]);
+  const [phoneProducts, setPhoneProducts] = useState<Product[]>([]);
+  const [laptopProducts, setLaptopProducts] = useState<Product[]>([]);
+  const [tabletProducts, setTabletProducts] = useState<Product[]>([]);
   const [outstandingProduct, setOutStandingProduct] = useState<Product[]>([]);
+  const user = useUserStore((state) => state.user);
 
   const plugin = useRef(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,10 +56,17 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     const fectchData = async () => {
       setIsLoading(true);
-      const result = await getAllProduct();
-      setProduct(result.data.products);
+      // const result = await getAllProduct();
+      // set(result.data.products);
       const result1 = await getOutStandingProduct();
       setOutStandingProduct(result1.data.products);
+
+      const result2 = await getProductByCategorySlug("may-tinh-bang", 20);
+      setTabletProducts(result2.data.products);
+      const result3 = await getProductByCategorySlug("laptop", 20);
+      setLaptopProducts(result3.data.products);
+      const result4 = await getProductByCategorySlug("dien-thoai", 20);
+      setPhoneProducts(result4.data.products);
       setIsLoading(false);
     };
     fectchData();
@@ -175,9 +187,64 @@ const DashboardPage: React.FC = () => {
             <Loading fullWeb={false} />
           </div>
         ) : (
-          <ProductGrid products={product} />
+          <ProductGrid products={phoneProducts} />
         )}
       </div>
+
+      {/* Grid product laptop */}
+      <div className="mt-3 border rounded-lg shadow-sm p-4">
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-bold text-3xl">Laptop</span>
+          <div className="flex items-center gap-3">
+            {laptopBrands.map((item, index) => {
+              return (
+                <Link
+                  href={item.link}
+                  key={index}
+                  className="border rounded-lg p-2 capitalize hover:text-white hover:bg-red-500 transition duration-200"
+                >
+                  {item.title}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+        {isLoading ? (
+          <div className=" h-[400px]">
+            <Loading fullWeb={false} />
+          </div>
+        ) : (
+          <ProductGrid products={laptopProducts} />
+        )}
+      </div>
+
+      {/* Grid product tablet */}
+      <div className="mt-3 border rounded-lg shadow-sm p-4">
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-bold text-3xl">Máy tính bảng</span>
+          <div className="flex items-center gap-3">
+            {tabletBrands.map((item, index) => {
+              return (
+                <Link
+                  href={item.link}
+                  key={index}
+                  className="border rounded-lg p-2 capitalize hover:text-white hover:bg-red-500 transition duration-200"
+                >
+                  {item.title}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+        {isLoading ? (
+          <div className=" h-[400px]">
+            <Loading fullWeb={false} />
+          </div>
+        ) : (
+          <ProductGrid products={tabletProducts} />
+        )}
+      </div>
+      {user.id && <UserChat />}
     </div>
   );
 };
@@ -219,200 +286,24 @@ const banner = [
 ];
 
 const phoneBrands = [
-  { title: "iphone", link: "/product/iphone" },
-  { title: "samsung", link: "/product/samsung" },
-  { title: "xiaomi", link: "/product/xiaomi" },
-  { title: "nokia", link: "/product/nokia" },
+  { title: "iphone", link: "/dien-thoai?brand=apple" },
+  { title: "samsung", link: "/dien-thoai?brand=samsung" },
+  { title: "xiaomi", link: "/dien-thoai?brand=xiaomi" },
+  { title: "lenovo", link: "/dien-thoai?brand=lenovo" },
 ];
 
-// const products = [
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-// ];
+const laptopBrands = [
+  { title: "Macbook", link: "/laptop?brand=apple" },
+  { title: "dell", link: "/laptop?brand=dell" },
+  { title: "hp", link: "/laptop?brand=hp" },
+  { title: "lenovo", link: "/laptop?brand=lenovo" },
+  { title: "acer", link: "/laptop?brand=acer" },
+  { title: "asus", link: "/laptop?brand=asus" },
+];
+
+const tabletBrands = [
+  { title: "Ipad", link: "/may-tinh-bang?brand=apple" },
+  { title: "samsung", link: "/may-tinh-bang?brand=samsung" },
+  { title: "xiaomi", link: "/may-tinh-bang?brand=xiaomi" },
+  { title: "huawei", link: "/may-tinh-bang?brand=huawei" },
+];

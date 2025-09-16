@@ -1,57 +1,76 @@
 import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
+import {
+  DEFAULT_LOGIN_USER_REDIRECT,
+  authRoutes,
+} from "@/routes"
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone();
-  const pathname = url.pathname;
-  // Bỏ qua middleware cho các tệp tĩnh, bao gồm CSS, JS, và hình ảnh
-  const PUBLIC_FILE = /\.(.*)$/;
+export async function middleware(req: NextRequest) {
+  const url = req.nextUrl.clone();
+  const isAuthRoute = authRoutes.includes(url.pathname);
+  const token = req.cookies.get("session")?.value;
 
-  if (PUBLIC_FILE.test(pathname)) {
+  if (!token) {
+    // Nếu đang vào các route cần auth mà không có token → redirect login
+    if (
+      url.pathname.startsWith("/lich-su-mua-hang") ||
+      url.pathname.startsWith("/dashboard-admin")
+    ) {
+      return NextResponse.redirect(new URL(DEFAULT_LOGIN_USER_REDIRECT, req.url));
+    }
+
+    // Còn route public thì cho đi
     return NextResponse.next();
   }
-  // Danh sach listcategory hop le
-  // const validCategories = [
-  //   "dtdd",
-  //   "laptop",
-  //   "phu-kien",
-  //   "dong-ho",
-  //   "dong-ho-thong-minh",
-  //   "man-hinh",
-  // ];
 
-  // if (
-  //   pathname === "/" ||
-  //   pathname.startsWith("/error") ||
-  //   pathname.startsWith("/login") ||
-  //   pathname.startsWith("/register") ||
-  //   pathname.startsWith("/verify") ||
-  //   pathname.startsWith("/forgot-password") ||
-  //   pathname.startsWith("/reset-password") ||
-  //   pathname.startsWith("/dashboard-admin") ||
-  //   pathname.startsWith("/lich-su-mua-hang")
-  // ) {
-  //   return NextResponse.next();
-  // }
-  // const slug = pathname.split("/")[1];
 
-  // const matchedSlug = validCategories.find((category) =>
-  //   slug.startsWith(category)
-  // );
+  try {
+    
+    // Mã hóa secret giống như khi sign JWT ở backend
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-  // if (!matchedSlug) {
-  //   return NextResponse.redirect(new URL("/error", request.url));
-  // }
+    // Xác thực + giải mã token
+    const { payload } = await jwtVerify(token, secret);
 
-  // if (slug !== matchedSlug) {
-  //   // Nếu slug không khớp chính xác, chuyển hướng tới slug hợp lệ
-  //   url.pathname = `/${matchedSlug}`;
-  //   return NextResponse.redirect(url);
-  // }
-  return NextResponse.next();
+    // console.log(payload)
+
+    // // Nếu đã đăng nhập thành công và vào các trang authRoute thì sẽ redirect lại "/"
+    // if(isAuthRoute) {
+    //   return NextResponse.redirect(new URL(DEFAULT_LOGIN_USER_REDIRECT, req.url));
+    // }
+
+    // ✅ Nếu chưa đăng nhập thì vẫn được vào "/" hoặc "/login", "/register"
+    if (!token) {
+      if (url.pathname.startsWith("/admin-dashboard")) {
+        return NextResponse.redirect(new URL("/login", req.url));
+      }
+      return NextResponse.next();
+    }
+
+    // ✅ Nếu đã đăng nhập mà vào /login hoặc /register => redirect về "/"
+    if(isAuthRoute) {
+      return NextResponse.redirect(new URL(DEFAULT_LOGIN_USER_REDIRECT, req.url));
+    }
+
+    // ✅ Nếu là admin mới được vào /admin-dashboard
+    if (url.pathname.startsWith("/admin-dashboard") && payload.role !== "admin") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    return NextResponse.next();
+  } catch (err) {
+    console.error("JWT error:", err);
+    return NextResponse.redirect(new URL("/", req.url));
+
+  }
 }
 
 export const config = {
-  // matcher: ["/((?!_next/static|_next/image|favicon.ico|auth).*)"],
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|auth).*)$", "/"],
-};
+    matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    // '/(api|trpc)(.*)',
+  ],
+}

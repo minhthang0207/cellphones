@@ -19,15 +19,21 @@ interface MenuSection {
 interface SidebarAdminProps {
   menuItems: MenuSection[];
   isUserInfoPage?: boolean;
+  isSticky?: boolean;
 }
 
 const SidebarAdmin: React.FC<SidebarAdminProps> = ({
   menuItems,
   isUserInfoPage = false,
+  isSticky = true,
 }) => {
   const pathname = usePathname();
   return (
-    <div className="flex flex-col p-4 gap-4 w-fit justify-center sticky top-0">
+    <div
+      className={`flex flex-col p-4 gap-4 w-fit justify-center ${
+        isSticky && "sticky top-0"
+      }`}
+    >
       {!isUserInfoPage && (
         <Link
           href="/dashboard-admin"

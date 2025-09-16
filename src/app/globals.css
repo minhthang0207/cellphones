@@ -148,3 +148,72 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #655f5f; /* Color of the scrollbar when hovered */
 }
+
+/* Ẩn các spinner trên các trình duyệt webkit (Chrome, Edge, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Ẩn spinner trên Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+form {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* wisht button */
+
+.wishlist-button {
+  position: relative;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.heart-icon {
+  stroke: #000; /* Màu viền trái tim */
+  fill: #a6a2a2; /* Khi hover, phần bên trong trái tim sẽ đỏ */
+
+  stroke-width: 2;
+  transition: fill 0.3s ease, transform 0.3s ease;
+}
+
+.heart-icon.fill {
+  fill: #ff0000;
+}
+ 
+.wishlist-button:hover .heart-icon {
+  fill: #ff0000; /* Khi hover, phần bên trong trái tim sẽ đỏ */
+  overflow: hidden;
+
+  animation: heartbeat 0.8s ease-in-out infinite; /* Hiệu ứng đập */
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2); /* Đập nhẹ */
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    background-color: #fecaca; /* bg-red-200 */
+  }
+  50% {
+    background-color: #ffffff; /* Màu trắng */
+  }
+}
+.animate-blink {
+  animation: blink 1s ease-in-out infinite;
+}

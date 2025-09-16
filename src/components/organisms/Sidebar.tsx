@@ -1,11 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link"; // Import cho điều hướng
-import { FaChevronRight, FaHeadphonesAlt } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 import { IoPhonePortraitOutline } from "react-icons/io5";
 import { FaLaptop } from "react-icons/fa6";
-import { BsWatch } from "react-icons/bs";
-import { TbDeviceDesktop } from "react-icons/tb";
 import { FaTabletAlt } from "react-icons/fa";
 
 // import Image from "next/image";
@@ -22,10 +20,10 @@ const Sidebar = () => {
         {
           name: "Điện thoại",
           items: [
-            { name: "iPhone", link: "/dien-thoai?thuonghieu=iphone" },
-            { name: "Samsung", link: "/dien-thoai?thuonghieu=samsung" },
-            { name: "Xiaomi", link: "/dien-thoai?thuonghieu=xiaomi" },
-            { name: "Nokia", link: "/dien-thoai?thuonghieu=oppo" },
+            { name: "iPhone", link: "/dien-thoai?brand=apple" },
+            { name: "Samsung", link: "/dien-thoai?brand=samsung" },
+            { name: "Xiaomi", link: "/dien-thoai?brand=xiaomi" },
+            { name: "Lenovo", link: "/dien-thoai?brand=oppo" },
           ],
         },
       ],
@@ -38,10 +36,10 @@ const Sidebar = () => {
         {
           name: "Thương hiệu",
           items: [
-            { name: "Ipad", link: "/may-tinh-bang?thuonghieu=ipad" },
-            { name: "Samsung", link: "/may-tinh-bang?thuonghieu=sámung" },
-            { name: "Xiaomi", link: "/may-tinh-bang?thuonghieu=xiaomi" },
-            { name: "Huawei", link: "/may-tinh-bang?thuonghieu=huawei" },
+            { name: "Ipad", link: "/may-tinh-bang?brand=ipad" },
+            { name: "Samsung", link: "/may-tinh-bang?brand=samsung" },
+            { name: "Xiaomi", link: "/may-tinh-bang?brand=xiaomi" },
+            { name: "Huawei", link: "/may-tinh-bang?brand=huawei" },
           ],
         },
       ],
@@ -54,48 +52,49 @@ const Sidebar = () => {
         {
           name: "Thương hiệu",
           items: [
-            { name: "MacBook", link: "/laptop?thuonghieu=macbook" },
-            { name: "Dell", link: "/laptop?thuonghieu=dell" },
-            { name: "HP", link: "/laptop/hp" },
-            { name: "Lenovo", link: "/laptop?thuonghieu=lenovo" },
-            { name: "Acer", link: "/laptop?thuonghieu=acer" },
+            { name: "MacBook", link: "/laptop?brand=apple" },
+            { name: "Dell", link: "/laptop?brand=dell" },
+            { name: "HP", link: "/laptop/?brand=hp" },
+            { name: "Lenovo", link: "/laptop?brand=lenovo" },
+            { name: "Acer", link: "/laptop?brand=acer" },
+            { name: "Asus", link: "/laptop?brand=asus" },
           ],
         },
       ],
     },
-    {
-      name: "Tai nghe",
-      icon: <FaHeadphonesAlt size={22} />,
-      link: "/tai-nghe",
-      subcategories: [
-        {
-          name: "Hãng tai nghe",
-          items: [
-            { name: "Apple", link: "/tai-nghe?thuonghieu=apple" },
-            { name: "Sony", link: "/tai-nghe?thuonghieu=sony" },
-            { name: "JBL", link: "/tai-nghe?thuonghieu=jbl" },
-            { name: "Huawai", link: "/tai-nghe?thuonghieu=huawei" },
-            { name: "Xiaomi", link: "/tai-nghe?thuonghieu=xiaomi" },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Đồng hồ",
-      icon: <BsWatch size={22} />,
-      link: "/dong-ho",
-    },
-    {
-      name: "Màn hình",
-      icon: <TbDeviceDesktop size={22} />,
-      link: "/man-hinh",
-    },
+    // {
+    //   name: "Tai nghe",
+    //   icon: <FaHeadphonesAlt size={22} />,
+    //   link: "/tai-nghe",
+    //   subcategories: [
+    //     {
+    //       name: "Hãng tai nghe",
+    //       items: [
+    //         { name: "Apple", link: "/tai-nghe?thuonghieu=apple" },
+    //         { name: "Sony", link: "/tai-nghe?thuonghieu=sony" },
+    //         { name: "JBL", link: "/tai-nghe?thuonghieu=jbl" },
+    //         { name: "Huawai", link: "/tai-nghe?thuonghieu=huawei" },
+    //         { name: "Xiaomi", link: "/tai-nghe?thuonghieu=xiaomi" },
+    //       ],
+    //     },
+    //   ],
+    // },
+    // {
+    //   name: "Đồng hồ",
+    //   icon: <BsWatch size={22} />,
+    //   link: "/dong-ho",
+    // },
+    // {
+    //   name: "Màn hình",
+    //   icon: <TbDeviceDesktop size={22} />,
+    //   link: "/man-hinh",
+    // },
   ];
 
   return (
     <div className="relative" onMouseLeave={() => setHoveredCategory(null)}>
       {/* Sidebar (300px) */}
-      <div className="relative z-10 w-[300px] bg-white border shadow-md rounded-lg text-neutral-700">
+      <div className="relative z-10 w-[300px] h-[350px] bg-white border shadow-md rounded-lg text-neutral-700">
         {categories.map((category, index) => (
           <Link
             href={category.link}

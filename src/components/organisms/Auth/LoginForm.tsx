@@ -9,11 +9,17 @@ import { useState } from "react";
 import { FaTree, FaLightbulb } from "react-icons/fa6";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
 import { useUserStore } from "@/store/user";
+import useCartStore from "@/store/cart";
+import useWishlistStore from "@/store/wishlist";
+
 
 const LoginForm = () => {
   const addUser = useUserStore((state) => state.addUser);
+  const fetchCart = useCartStore((state) => state.fetchCart);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const user = useUserStore((state) => state.user);
+  const fetchWishList = useWishlistStore((state) => state.fetchWishList);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
@@ -77,6 +83,10 @@ const LoginForm = () => {
     const resultUser = await getUser();
     if (resultUser.success && resultUser.data.user) {
       addUser(resultUser.data.user);
+      await Promise.all([
+          fetchCart(resultUser.data.user.id),
+          fetchWishList(resultUser.data.user.id),
+        ]);
     }
     setIsLoading(false);
 
@@ -87,7 +97,7 @@ const LoginForm = () => {
       if (resultUser.data.user.role === "user") {
         router.push("/");
       } else {
-        router.push("dashboard-admin");
+        router.push("/dashboard-admin");
       }
     } else {
       setError(result.message);

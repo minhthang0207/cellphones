@@ -33,8 +33,10 @@ const VariantTableForm: React.FC<VariantTableFormProps> = ({ id }) => {
   const [listRam, setListRam] = useState<Ram[]>([]);
   const [listRom, setListRom] = useState<Rom[]>([]);
   const [listColor, setListColor] = useState<Color[]>([]);
-  const [listVariant, setListVariant] = useState<Variant[]>([]);
-  const [selectedItem, setSelectedItem] = useState<Variant | null>(null);
+  const [listVariant, setListVariant] = useState<Variant_Product[]>([]);
+  const [selectedItem, setSelectedItem] = useState<Variant_Product | null>(
+    null
+  );
 
   const [data, setData] = useState({
     name: "",
@@ -48,7 +50,7 @@ const VariantTableForm: React.FC<VariantTableFormProps> = ({ id }) => {
   const [isShowAlert, setIsShowAlert] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
 
-  const handleSelectUpdate = (variant: Variant) => {
+  const handleSelectUpdate = (variant: Variant_Product) => {
     setSelectedItem(variant);
     setIsEdit(true);
     setData((prevData) => ({
@@ -62,7 +64,7 @@ const VariantTableForm: React.FC<VariantTableFormProps> = ({ id }) => {
     }));
   };
 
-  const handleDeleteVariant = (variant: Variant) => {
+  const handleDeleteVariant = (variant: Variant_Product) => {
     setIsShowAlert(true);
     setSelectedItem(variant);
   };
@@ -232,9 +234,6 @@ const VariantTableForm: React.FC<VariantTableFormProps> = ({ id }) => {
     fetchData();
   }, [id]);
 
-  useEffect(() => {
-    console.log("Data updated:", data);
-  }, [data]);
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-white  rounded-tl-md rounded-tr-md">

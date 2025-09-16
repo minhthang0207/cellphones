@@ -177,7 +177,6 @@ const UserProfileForm: React.FC = () => {
   };
 
   const getWardData = async (id: string) => {
-    console.log(id);
     try {
       const response = await fetch(`https://open.oapi.vn/location/wards/${id}`);
       const result = await response.json();
@@ -254,7 +253,6 @@ const UserProfileForm: React.FC = () => {
 
       if (user.address) {
         const address = user?.address.split(", ");
-        console.log(address);
         setLocationValue({
           province: address[3],
           district: address[2],

@@ -20,7 +20,7 @@ const ResetPasswordForm: React.FC<PaymentDetailProps> = ({ token }) => {
     password: "",
     passwordConfirm: "",
   });
-  const [error, setError] = useState("213");
+  const [error, setError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [isLoading, setIsLoading] = useState(false);

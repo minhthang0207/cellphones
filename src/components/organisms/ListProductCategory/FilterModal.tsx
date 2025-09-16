@@ -32,9 +32,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const [isModalShow, setIsModalShow] = useState(false);
 
   const currentFilters = options[pathname] || {};
-  // console.log(Object.entries(selectedFilters));
-
-  console.log(selectedFilters);
 
   const handleResult = async () => {
     setIsModalShow(false);
