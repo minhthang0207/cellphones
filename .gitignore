@@ -30,7 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+# Ignore tất cả file env
+.env
+.env.local
+.env.*.local
+
+# Nhưng cho phép push file example
+!.env.example
 
 # vercel
 .vercel
