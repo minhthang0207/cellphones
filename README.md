@@ -51,10 +51,12 @@ npm install
 npm run dev
 
 
+```
+
 ## 🔗 Backend
 Dự án này cần chạy kèm backend: [CellphoneS Backend](https://github.com/minhthang0207/cellphones_BE)  
 
-```
+
 # Giao diện website
 
 Trang chủ
