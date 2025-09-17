@@ -54,9 +54,10 @@ npm run dev
 ## 🔗 Backend
 Dự án này cần chạy kèm backend: [CellphoneS Backend](https://github.com/minhthang0207/cellphones_BE)  
 
-
+```
 # Giao diện website
 
-![Trang chủ](public/docs/homepage_user.png)
-
-![Dashboard admin](public/docs/homepage_admin.png)
+![Trang chủ]
+https://github.com/minhthang0207/cellphones/blob/main/public/docs/homepage_user.png?raw=true
+[Dashboard admin]
+https://github.com/minhthang0207/cellphones/blob/main/public/docs/homepage_admin.png?raw=true
