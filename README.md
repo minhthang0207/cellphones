@@ -57,6 +57,6 @@ Dự án này cần chạy kèm backend: [CellphoneS Backend](https://github.com
 
 # Giao diện website
 
-![Trang chủ](./public/docs/homepage_user.png)
+![Trang chủ](public/docs/homepage_user.png)
 
-![Dashboard admin](./public/docs/homepage_admin.png)
+![Dashboard admin](public/docs/homepage_admin.png)
