@@ -58,7 +58,7 @@ Dự án này cần chạy kèm backend: [CellphoneS Backend](https://github.com
 # Giao diện website
 
 ![Trang chủ]
-<img width="1920" height="919" alt="Image" src="https://github.com/user-attachments/assets/16a7541e-a35f-457d-8563-9aced21af174" />
+https://github.com/minhthang0207/cellphones/issues/1#issue-3425526041
 
 ![Dashboard admin]
-<img width="1920" height="936" alt="Image" src="https://github.com/user-attachments/assets/52c3a297-c63d-4612-808f-8eccca0f36cb" />
+https://github.com/minhthang0207/cellphones/issues/2#issue-3425527911
