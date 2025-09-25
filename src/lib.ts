@@ -1414,7 +1414,6 @@ export async function getFilteredProduct(
     );
 
     const result = await response.json();
-    console.log(result.data);
 
     // Kiểm tra nếu phản hồi thành công
     if (response.ok) {
@@ -2695,6 +2694,7 @@ export async function createPayment(
           items,
           totalAmount,
           userId,
+          orderId: "12312321",
         }),
       }
     );

@@ -60,7 +60,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
       <button
         type="button"
         onClick={() => setIsModalShow(!isModalShow)}
-        className={`border relative flex items-center gap-2 p-1 text-base rounded-lg border-red-500 text-red-500 z-50
+        className={`border relative flex items-center gap-2 p-1 text-base rounded-lg border-red-500 text-red-500 z-40
           ${
             isModalShow &&
             "bg-white relative before:content-[''] z-30 before:bg-white before:absolute before:left-1/2 before:-translate-x-1/2 before:top-[120%] before:w-[30px] before:h-[30px] before:transform before:rotate-45"

@@ -22,21 +22,18 @@ import { LuShieldCheck } from "react-icons/lu";
 import { MdOutlineLocalShipping } from "react-icons/md";
 import { IoLogoApple } from "react-icons/io";
 import Autoplay from "embla-carousel-autoplay";
-import { useEffect, useRef, useState } from "react";
+import {useRef } from "react";
 import SaleProduct from "./SaleProduct";
-import ProductGrid from "./ProductGrid";
-import Link from "next/link";
-import { getOutStandingProduct, getProductByCategorySlug } from "@/lib";
-import Loading from "../Loading";
 import UserChat from "../Chatbox/Chat";
 import { useUserStore } from "@/store/user";
+import ProductGroup from "./ProductGroup";
+
+import { useLandingProducts } from "@/hooks/useLandingProduct";
+
 
 const DashboardPage: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [phoneProducts, setPhoneProducts] = useState<Product[]>([]);
-  const [laptopProducts, setLaptopProducts] = useState<Product[]>([]);
-  const [tabletProducts, setTabletProducts] = useState<Product[]>([]);
-  const [outstandingProduct, setOutStandingProduct] = useState<Product[]>([]);
+  const { outstanding, tablets, laptops, phones, isLoading, isError } = useLandingProducts();
+  
   const user = useUserStore((state) => state.user);
 
   const plugin = useRef(
@@ -53,32 +50,19 @@ const DashboardPage: React.FC = () => {
     plugin.current?.play(); // Sử dụng reset() thay vì start()
   };
 
-  useEffect(() => {
-    const fectchData = async () => {
-      setIsLoading(true);
-      // const result = await getAllProduct();
-      // set(result.data.products);
-      const result1 = await getOutStandingProduct();
-      setOutStandingProduct(result1.data.products);
-
-      const result2 = await getProductByCategorySlug("may-tinh-bang", 20);
-      setTabletProducts(result2.data.products);
-      const result3 = await getProductByCategorySlug("laptop", 20);
-      setLaptopProducts(result3.data.products);
-      const result4 = await getProductByCategorySlug("dien-thoai", 20);
-      setPhoneProducts(result4.data.products);
-      setIsLoading(false);
-    };
-    fectchData();
-  }, []);
+  if (isError) {
+    return <p>Không thể tải sản phẩm. Vui lòng thử lại sau.</p>;
+  }
 
   return (
     <div className="max-w-[1280px] mx-auto h-fit">
-      <div className=" grid grid-cols-[300px_1fr] my-3 w-full overflow-hidden">
+      <div className="md:grid md:grid-cols-[300px_1fr] my-3 w-full overflow-hidden sm">
         {/* sidebar left */}
-        <Sidebar />
+        <div className="hidden md:block">
+          <Sidebar />
+        </div>
         {/* carousel */}
-        <div className=" border shadow-md rounded-lg overflow-hidden">
+        <div className=" h-[200px] sm:h-[300px] md:h-full border shadow-md rounded-lg overflow-hidden">
           <Carousel className="w-full h-full ">
             <CarouselContent className="-ml-1 h-full">
               {banner.map((item, index) => (
@@ -101,29 +85,29 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* policy */}
-      <div className="flex items-center border rounded-lg py-3 my-3">
-        <div className="flex gap-4 w-1/3 items-center justify-center">
+      <div className="flex flex-col gap-4 px-4 sm:flex-row items-center border rounded-lg py-3 my-3">
+        <div className="flex gap-4 w-full sm:w-1/3 items-center sm:justify-center">
           <IoReturnUpBack size={30} className="text-red-700" />
           <div className="flex flex-col gap-1">
-            <span className="text-xl">Trả hàng Miễn phí 15 ngày</span>
+            <span className="text-sm md:text-xl">Trả hàng Miễn phí 15 ngày</span>
             <span className="text-sm text-neutral-500">
               Trả hàng miễn phí trong 15 ngày
             </span>
           </div>
         </div>
-        <div className="flex gap-4 w-1/3 items-center justify-center">
+        <div className="flex gap-4 w-full sm:w-1/3 items-center sm:justify-center">
           <LuShieldCheck size={30} className="text-red-700" />
           <div className="flex flex-col gap-1">
-            <span className="text-xl">Hàng chính hãng 100%</span>
+            <span className="text-sm md:text-xl">Hàng chính hãng 100%</span>
             <span className="text-sm text-neutral-500">
               Đảm bảo hàng chính hãng hoặc hoàn tiền gấp đôi
             </span>
           </div>
         </div>
-        <div className="flex gap-4 w-1/3 items-center justify-center">
+        <div className="flex gap-4 w-full sm:w-1/3 items-center sm:justify-center">
           <MdOutlineLocalShipping size={30} className="text-red-700" />
           <div className="flex flex-col gap-1">
-            <span className="text-xl">Miễn phí vận chuyển</span>
+            <span className="text-sm md:text-xl">Miễn phí vận chuyển</span>
             <span className="text-sm text-neutral-500">
               Giao hàng miễn phí toàn quốc
             </span>
@@ -133,7 +117,7 @@ const DashboardPage: React.FC = () => {
 
       {/* Sale Product */}
       <div>
-        <SaleProduct products={outstandingProduct} isLoading={isLoading} />
+        <SaleProduct products={outstanding} isLoading={isLoading} />
       </div>
 
       {/* logo business */}
@@ -165,85 +149,31 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* Grid product phone */}
-      <div className="mt-3 border rounded-lg shadow-sm p-4">
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-bold text-3xl">Điện thoại</span>
-          <div className="flex items-center gap-3">
-            {phoneBrands.map((item, index) => {
-              return (
-                <Link
-                  href={item.link}
-                  key={index}
-                  className="border rounded-lg p-2 capitalize hover:text-white hover:bg-red-500 transition duration-200"
-                >
-                  {item.title}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-        {isLoading ? (
-          <div className=" h-[400px]">
-            <Loading fullWeb={false} />
-          </div>
-        ) : (
-          <ProductGrid products={phoneProducts} />
-        )}
-      </div>
+      <ProductGroup 
+        label="Điện thoại" 
+        linkAll="/dien-thoai" 
+        isLoading={isLoading}  
+        listBrand={phoneBrands}
+        product={phones}
+      />
 
       {/* Grid product laptop */}
-      <div className="mt-3 border rounded-lg shadow-sm p-4">
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-bold text-3xl">Laptop</span>
-          <div className="flex items-center gap-3">
-            {laptopBrands.map((item, index) => {
-              return (
-                <Link
-                  href={item.link}
-                  key={index}
-                  className="border rounded-lg p-2 capitalize hover:text-white hover:bg-red-500 transition duration-200"
-                >
-                  {item.title}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-        {isLoading ? (
-          <div className=" h-[400px]">
-            <Loading fullWeb={false} />
-          </div>
-        ) : (
-          <ProductGrid products={laptopProducts} />
-        )}
-      </div>
+      <ProductGroup 
+        label="Laptop" 
+        linkAll="/laptop" 
+        isLoading={isLoading}
+        listBrand={laptopBrands}
+        product={laptops}
+      />
 
       {/* Grid product tablet */}
-      <div className="mt-3 border rounded-lg shadow-sm p-4">
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-bold text-3xl">Máy tính bảng</span>
-          <div className="flex items-center gap-3">
-            {tabletBrands.map((item, index) => {
-              return (
-                <Link
-                  href={item.link}
-                  key={index}
-                  className="border rounded-lg p-2 capitalize hover:text-white hover:bg-red-500 transition duration-200"
-                >
-                  {item.title}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-        {isLoading ? (
-          <div className=" h-[400px]">
-            <Loading fullWeb={false} />
-          </div>
-        ) : (
-          <ProductGrid products={tabletProducts} />
-        )}
-      </div>
+      <ProductGroup 
+        label="Máy tính bảng" 
+        linkAll="/may-tinh-bang" 
+        isLoading={isLoading}
+        listBrand={tabletBrands}
+        product={tablets}
+      />
       {user.id && <UserChat />}
     </div>
   );

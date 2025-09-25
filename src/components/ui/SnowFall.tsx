@@ -73,6 +73,7 @@ const Snowfall: React.FC = () => {
           zIndex: 9998,
           pointerEvents: "none",
         }}
+        className="z-50 hidden md:block"
         priority={false}
 
       />
@@ -86,30 +87,48 @@ const Snowfall: React.FC = () => {
           width: "auto",
           height: "auto",
           position: "fixed",
-          top: "0%",
+          top: "64px",
           right: "0%",
-          zIndex: 60,
           pointerEvents: "none",
         }}
+        className="z-50 hidden md:block"
         priority={false}
 
       />
 
-      <Image
-        width={120}
-        height={120}
-        src="/top-left-page.png"
-        alt="Christmas snow man"
-        style={{
-          position: "fixed",
-          top: "-8%",
-          left: "-3%",
-          zIndex: 9998,
-          pointerEvents: "none",
-        }}
-        priority={false}
+        
+      {/* <div className="fixed top-[-1%] left-[14%] flex-row gap-16 z-50 hidden md:flex">
+        <Image
+          width={120}
+          height={120}
+          src="/top-left-page.png"
+          alt="Christmas snow man"
+          // style={{
+          //   position: "fixed",
+          //   top: "0px",
+          //   left: "300px",
+          //   pointerEvents: "none",
+          // }}
+          className="rotate-180 z-50 block"
+          priority={false}
+        />
 
-      />
+        <Image
+          width={120}
+          height={120}
+          src="/top-left-page.png"
+          alt="Christmas snow man"
+          // style={{
+          //   position: "fixed",
+          //   top: "0px",
+          //   left: "300px",
+          //   pointerEvents: "none",
+          // }}
+          className="rotate-180 z-50 "
+          priority={false}
+        />
+
+      </div> */}
 
       <style>
         {`

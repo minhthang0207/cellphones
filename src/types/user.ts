@@ -20,4 +20,5 @@ export interface UserState {
   // eslint-disable-next-line no-unused-vars
   addUser: (user: User) => void;
   updateUser: (newUser: Partial<User>) => void;
+  logout: () => void;
 }

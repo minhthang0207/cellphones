@@ -73,7 +73,7 @@ const NormalLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [user, isAuthPage, addUser, router, fetchCart, fetchWishList, ready]);   
   
   return (
-    <div className="w-full h-screen  ">
+    <div className="w-full h-screen">
       {/* <Toaster position="top-center" /> */}
 
       <div>

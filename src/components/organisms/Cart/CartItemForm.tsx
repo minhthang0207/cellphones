@@ -121,7 +121,7 @@ const CartItemForm: React.FC<CartItemFormProp> = ({
     >
       {/* content */}
       <div className="`flex gap-4 justify-between">
-        <div className=" flex items-start gap-4 ">
+        <div className="flex flex-col md:flex-row items-start gap-4 ">
           <input
             type="checkbox"
             checked={selectedItems.some(
@@ -135,7 +135,7 @@ const CartItemForm: React.FC<CartItemFormProp> = ({
             src={item?.Variant?.Product?.image}
             alt={item?.Variant?.Product?.name}
           />
-          <div className=" flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <h3>{item.Variant.Product.name}</h3>
             <p>Tên sản phẩm: {item.Variant.name}</p>
             <p>

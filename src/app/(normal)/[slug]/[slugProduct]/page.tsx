@@ -1,9 +1,6 @@
 import SingleProductForm from "@/components/organisms/ListProductCategory/DetailSingleProduct/SingleProductForm";
 import { getProductBySlug } from "@/lib";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getProduct(slugProduct: string) {}
-
 // Component hiển thị sản phẩm
 const SingleProductPage = async ({
   params,

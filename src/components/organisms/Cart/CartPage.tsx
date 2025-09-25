@@ -123,7 +123,7 @@ const CartPage: React.FC = () => {
   if (cart.length === 0) {
     return (
       <div className="max-w-[1280px] mx-auto h-fit p-4">
-        <div className="w-[60%] h-[500px] mx-auto border rounded-lg border-red-500 p-4 shadow-lg">
+        <div className="w-[90%] md:w-[60%] h-[500px] mx-auto border rounded-lg border-red-500 p-4 shadow-lg">
           <h4 className="mx-auto text-center text-2xl font-bold mb-6">
             Giỏ hàng
           </h4>
@@ -146,7 +146,7 @@ const CartPage: React.FC = () => {
 
   return (
     <div className="max-w-[1280px] mx-auto h-fit p-4">
-      <div className="w-[60%] mx-auto border rounded-lg border-red-500 p-4 shadow-lg">
+      <div className="w-[90%] md:w-[60%] mx-auto border rounded-lg border-red-500 p-4 shadow-lg">
         <h4 className="mx-auto text-center text-2xl font-bold mb-6">
           Giỏ hàng
         </h4>
@@ -165,7 +165,7 @@ const CartPage: React.FC = () => {
       </div>
 
       {selectedItems.length > 0 && (
-        <div className="w-[60%] h-fit mx-auto border rounded-lg border-red-500 p-4 mt-8 shadow-lg overflow-auto ">
+        <div className="w-[90%] md:w-[60%] h-fit mx-auto border rounded-lg border-red-500 p-4 mt-8 shadow-lg overflow-auto ">
           <div className=" w-full h-full">
             <h6 className="font-bold text-xl uppercase">Đơn hàng của bạn</h6>
             <Link

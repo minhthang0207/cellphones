@@ -11,10 +11,17 @@ import { getAllOrderByUserId, updateOrder } from "@/lib";
 import { useUserStore } from "@/store/user";
 import Loading from "../../Loading";
 import { toast } from "sonner";
+import { Combobox } from "@/components/ui/combobox";
+
+interface StatusOrder {
+  id: string;
+  label: string;
+  value: string;
+}
 
 const OrderHistoryForm: React.FC = () => {
   const user = useUserStore((state) => state.user);
-  const [selectedFilter, setSelectedFilter] = useState(listFilter[0].value);
+  const [selectedFilter, setSelectedFilter] = useState<StatusOrder>(listFilter[0]);
   const [isLoading, setisLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [date, setDate] = useState<DateRange | undefined>({
@@ -22,8 +29,8 @@ const OrderHistoryForm: React.FC = () => {
     to: new Date(),
   });
 
-  const handleChangeFilter = (value: string) => {
-    setSelectedFilter(value);
+  const handleChangeFilter = (item: StatusOrder) => {
+    setSelectedFilter(item);
   };
   const formatDateTime = (dateString: string): string => {
     const date = new Date(dateString); // Tạo đối tượng Date từ chuỗi
@@ -47,7 +54,7 @@ const OrderHistoryForm: React.FC = () => {
     const result = await updateOrder({ orderId, status: "Đã hủy" });
     if (result.success) {
       toast.info("Đã hủy đơn hàng");
-      const result1 = await getAllOrderByUserId(user.id, selectedFilter);
+      const result1 = await getAllOrderByUserId(user.id, selectedFilter.value);
       if (result1.success) {
         setOrders(result1.data.orders);
       }
@@ -58,7 +65,7 @@ const OrderHistoryForm: React.FC = () => {
   useEffect(() => {
     const fecthData = async () => {
       setisLoading(true);
-      const result = await getAllOrderByUserId(user.id, selectedFilter);
+      const result = await getAllOrderByUserId(user.id, selectedFilter.value);
       if (result.success) {
         setOrders(result.data.orders);
       }
@@ -71,25 +78,27 @@ const OrderHistoryForm: React.FC = () => {
 
   return (
     <div>
-      <div className="flex gap-6 items-baseline">
-        <p className="font-medium text-neutral-700 text-xl mb-4 ">
+      <div className="flex flex-col gap-2 md:flex-row md:gap-6 items-baseline">
+        <p className="font-medium text-neutral-700 text-xl md:mb-4 ">
           Đơn hàng đã mua
         </p>
-        <DatePickerWithRange date={date} setDate={setDate} />
+        <div className="w-full max-w-[300px]">
+          <DatePickerWithRange date={date} setDate={setDate} />
+        </div>
       </div>
 
       {/* filter */}
 
-      <div className="flex flex-wrap gap-4">
+      <div className="hidden md:flex flex-wrap gap-4">
         {listFilter.map((item, index) => {
           return (
             <button
               type="button"
               key={index}
               className={`block rounded-md border border-neutral-400 px-4 py-1 ${
-                item.value === selectedFilter && "border-red-500 border-2"
+                item.value === selectedFilter.value && "border-red-500 border-2"
               }`}
-              onClick={() => handleChangeFilter(item.value)}
+              onClick={() => handleChangeFilter(item)}
             >
               {item.label}
             </button>
@@ -97,26 +106,45 @@ const OrderHistoryForm: React.FC = () => {
         })}
       </div>
 
+      <div className="md:hidden mt-2 w-full max-w-[300px]">
+        <span>
+          Trạng thái đơn hàng
+        </span>
+        <div className="mt-2">
+          <Combobox<StatusOrder>
+            selectedItem={selectedFilter.label}
+            data={listFilter}
+            label="Chọn trạng thái đơn hàng"
+            placeholder="Tìm kiếm Tỉnh, Thành"
+            handleSelect={handleChangeFilter}
+            showSearch={false}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 font-semibold md:hidden text-red-400">DANH SÁCH ĐƠN HÀNG</div>
+
       {/* items */}
       {orders.length > 0 ? (
         <div
           className={`h-[500px] border border-neutral-300 rounded-lg flex flex-col ${
             isLoading ? "gap-0" : "gap-4"
-          }  mt-4 overflow-x-hidden overflow-y-scroll custom-scrollbar shadow-md`}
+          } mt-4 overflow-x-hidden overflow-y-scroll custom-scrollbar shadow-md`}
         >
+          {/* Header chỉ hiện ở desktop */}
           <div
-            className={`sticky top-0 grid ${
-              selectedFilter === "pending"
+            className={`sticky top-0 hidden md:grid ${
+              selectedFilter.value === "pending"
                 ? "grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr]"
                 : "grid-cols-[2fr_1fr_1fr_1fr_1fr]"
-            }  border-b py-2 px-4 bg-red-400 text-white`}
+            } border-b py-2 px-4 bg-red-400 text-white`}
           >
             <div>Sản phẩm</div>
             <div>Phương thức</div>
             <div>Trạng thái</div>
             <div>Ngày đặt hàng</div>
             <div>Tổng số tiền</div>
-            {selectedFilter === "pending" && <div></div>}
+            {selectedFilter.value === "pending" && <div></div>}
           </div>
 
           {isLoading ? (
@@ -124,35 +152,33 @@ const OrderHistoryForm: React.FC = () => {
               <Loading fullWeb={false} hasOverLay={false} />
             </div>
           ) : (
-            orders.map((order, index) => {
-              return (
+            orders.map((order, index) => (
+              <div
+                key={index}
+                className={`px-4 pb-4 border-b ${
+                  index === orders.length ? "border-b-0" : "border-b"
+                }`}
+              >
+                {/* Desktop row */}
                 <div
-                  key={index}
-                  className={`grid ${
-                    selectedFilter === "pending"
+                  className={`hidden md:grid ${
+                    selectedFilter.value === "pending"
                       ? "grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr]"
                       : "grid-cols-[2fr_1fr_1fr_1fr_1fr]"
-                  } px-4 pb-4 ${
-                    index === orders.length ? "border-b-0" : "border-b"
                   }`}
                 >
                   <div className="flex flex-col gap-1">
-                    {order.items.map((product, index) => {
-                      return (
-                        <div key={index}>
-                          {product.Variant.name} x{product.quantity}
-                        </div>
-                      );
-                    })}
+                    {order.items.map((product, i) => (
+                      <div key={i}>
+                        {product.Variant.name} x{product.quantity}
+                      </div>
+                    ))}
                   </div>
                   <div>{order.payment_method}</div>
                   <div>{order.payment_status}</div>
                   <div>{formatDateTime(order.createdAt)}</div>
-                  <div>
-                    {" "}
-                    {Number(order.total_amount).toLocaleString("vi-en")}đ
-                  </div>
-                  {selectedFilter === "pending" && (
+                  <div>{Number(order.total_amount).toLocaleString("vi-en")}đ</div>
+                  {selectedFilter.value === "pending" && (
                     <button
                       type="button"
                       className="bg-red-500 rounded-md flex items-center justify-center px-4 py-2 text-white hover:bg-red-400 transition duration-300"
@@ -162,8 +188,45 @@ const OrderHistoryForm: React.FC = () => {
                     </button>
                   )}
                 </div>
-              );
-            })
+
+                {/* Mobile card */}
+                <div className="flex flex-col gap-2 md:hidden bg-white rounded-lg p-3 shadow-sm">
+                  <div>
+                    <span className="font-semibold">Sản phẩm: </span>
+                    {order.items.map((product, i) => (
+                      <span key={i}>
+                        {product.Variant.name} x{product.quantity}{" "}
+                      </span>
+                    ))}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Phương thức: </span>
+                    {order.payment_method}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Trạng thái: </span>
+                    {order.payment_status}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Ngày đặt hàng: </span>
+                    {formatDateTime(order.createdAt)}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Tổng: </span>
+                    {Number(order.total_amount).toLocaleString("vi-en")}đ
+                  </div>
+                  {selectedFilter.value === "pending" && (
+                    <button
+                      type="button"
+                      className="bg-red-500 rounded-md flex items-center justify-center px-4 py-2 text-white hover:bg-red-400 transition duration-300"
+                      onClick={() => handleCancelOrder(order.id)}
+                    >
+                      Hủy đơn
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
           )}
         </div>
       ) : (
@@ -191,26 +254,32 @@ export default OrderHistoryForm;
 
 const listFilter = [
   {
+    id: "1",
     label: "Tất cả",
     value: "all",
   },
   {
+    id: "2",
     label: "Chờ xác nhận",
     value: "pending",
   },
   {
+    id: "3",
     label: "Đã xác nhận",
     value: "confirmed",
   },
   {
+    id: "4",
     label: "Đang vận chuyển",
     value: "transit",
   },
   {
+    id: "5",
     label: "Đã giao hàng",
     value: "delivered",
   },
   {
+    id: "6",
     label: "Đã hủy",
     value: "canceled",
   },

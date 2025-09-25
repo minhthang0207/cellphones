@@ -40,6 +40,7 @@ interface ClientToServerEvents {
 const UserChat = () => {
   const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [hasFetched, setHasFetched] = useState(false);
   const [conversationId, setConversationId] = useState<string>("");
   const [timestampMsgAdminId, setTimestampMsgAdminId] = useState<string>("");
   const [statusMsgId, setStatusMsgId] = useState<string>("");
@@ -69,6 +70,43 @@ const UserChat = () => {
       return `${day}/${month}/${year} LÚC ${hours}:${minutes}`;
     } else if(types === "time") {
       return `${hours}:${minutes}`;
+    }
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/chats/${user.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+
+      if (!response.ok) {
+        throw new Error("Không thể lấy danh sách tin nhắn!");
+      }
+
+      const result = await response.json();
+
+      setConversationId(result.id)
+
+      setMessages(result.messages); // Cập nhật state với dữ liệu tin nhắn từ API
+
+      setAdminInfo(result.user2)
+
+      // Tính số lượng tin nhắn chưa đọc mà người gửi là admin
+      const unreadMessages = result.messages.filter(
+        (msg: Message) => !msg.isRead && msg.receiver_id === user.id
+      );
+      setUnreadCount(unreadMessages.length);
+      setHasFetched(true);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
     }
   };
 
@@ -104,44 +142,30 @@ const UserChat = () => {
   }, [user.id]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/chats/${user.id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
 
-        if (!response.ok) {
-          throw new Error("Error fetching messages");
+    const fetchUnReadCount = async() => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/chats/unread-count`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        const result = await response.json();
-
-        setConversationId(result.id)
-
-        setMessages(result.messages); // Cập nhật state với dữ liệu tin nhắn từ API
-
-        setAdminInfo(result.user2)
-
-        // Tính số lượng tin nhắn chưa đọc mà người gửi là admin
-        const unreadMessages = result.messages.filter(
-          (msg: Message) => !msg.isRead && msg.receiver_id === user.id
-        );
-        setUnreadCount(unreadMessages.length);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
+      if (!response.ok) {
+        throw new Error("Có lỗi xảy ra!");
       }
-    };
+
+      const result = await response.json();
+      setUnreadCount(result.unreadCount);
+    }
 
     if (user.id) {
-      fetchMessages();
-
+      fetchUnReadCount();
+      
       if(socketRef.current) {
         socketRef.current.on("new_message", (newMessage) => {
           setMessages((prevMessages) => [...prevMessages, newMessage]); // Thêm tin nhắn mới vào state
@@ -186,11 +210,14 @@ const UserChat = () => {
     }
   };
 
-  const toggleChatbox = () => {
+  const toggleChatbox = async() => {
     setIsChatOpen(!isChatOpen);
 
     // Khi mở chatbox, đánh dấu tất cả tin nhắn từ admin là đã đọc
     if (!isChatOpen) {
+      if(!hasFetched) {
+        await fetchMessages();
+      }
       const unreadMessage = messages.filter(
         (msg) => !msg.isRead && msg.receiver_id === user.id
       );

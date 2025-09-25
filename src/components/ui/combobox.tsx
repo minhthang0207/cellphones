@@ -21,8 +21,10 @@ import {
 
 // Định nghĩa kiểu danh sách
 type ListType = {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
+  label?: string;
+  value?: string;
 };
 
 interface ComboboxProps<T extends ListType> {
@@ -31,6 +33,7 @@ interface ComboboxProps<T extends ListType> {
   placeholder?: string; // Placeholder tuỳ chỉnh
   selectedItem: string;
   handleSelect: (selected: T) => void; // Hàm callback khi chọn một item
+  showSearch?: boolean;
 }
 
 export function Combobox<T extends ListType>({
@@ -39,6 +42,7 @@ export function Combobox<T extends ListType>({
   placeholder = "Search...",
   selectedItem,
   handleSelect,
+  showSearch = true
 }: ComboboxProps<T>) {
   const [open, setOpen] = React.useState(false);
 
@@ -57,24 +61,28 @@ export function Combobox<T extends ListType>({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder={placeholder} className="h-9" />
+          {
+            showSearch && (
+              <CommandInput placeholder={placeholder} className="h-9" />
+            )
+          }
           <CommandList>
             <CommandEmpty>Không tìm thấy</CommandEmpty>
             <CommandGroup>
               {data.map((item) => (
                 <CommandItem
                   key={item.id}
-                  value={item.name}
+                  value={item.name || item.value}
                   onSelect={() => {
                     setOpen(false);
                     handleSelect(item);
                   }}
                 >
-                  {item.name}
+                  {item.name || item.label}
                   <Check
                     className={cn(
                       "ml-auto",
-                      selectedItem === item.name ? "opacity-100" : "opacity-0"
+                      selectedItem === item.name || selectedItem === item.label ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

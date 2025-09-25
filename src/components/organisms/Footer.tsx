@@ -3,8 +3,8 @@ import { FaFacebook, FaYoutube, FaTiktok, FaInstagram } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 const Footer: React.FC = () => {
   return (
-    <div className="border border-t bg-white">
-      <div className="max-w-[1280px] grid grid-cols-4 mx-auto py-4 ">
+    <div className="border border-t bg-white hidden md:block">
+      <div className="max-w-[1280px] p-4 grid md:grid-cols-2 md:gap-y-8 lg:grid-cols-4 gap-4 mx-auto py-4 ">
         {/* col 1 */}
         <div>
           <p className="font-semibold text-sm mb-2">Tổng đài hỗ trợ</p>
@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className=" py-4">
+      <div className="p-4">
         {/* bg-neutral-100 */}
         <div className="max-w-[1280px] mx-auto">
           <p className="text-xs text-neutral-500">

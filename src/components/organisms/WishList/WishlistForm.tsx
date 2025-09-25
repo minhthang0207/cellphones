@@ -11,7 +11,7 @@ const WishlistForm: React.FC = () => {
       </h4>
 
       <p className="my-4">Tổng số lượng: {wishlist.length}</p>
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {wishlist.map((item) => {
           return <CardWishList item={item} key={item.id} />;
         })}

@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useUserStore } from "@/store/user";
+import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -10,6 +11,8 @@ import { updateUserInfo, updateUserLocation } from "@/lib";
 import Loading from "../../Loading";
 import CalendarCustom from "@/components/ui/calendarCustom";
 import { Combobox } from "@/components/ui/combobox";
+import { CiLogout } from "react-icons/ci";
+
 
 const UserProfileForm: React.FC = () => {
   const user = useUserStore((state) => state.user);
@@ -39,6 +42,13 @@ const UserProfileForm: React.FC = () => {
   const [provinceData, setProvinceData] = useState<Provinces[]>([]);
   const [districtData, setDistrictData] = useState<Districts[]>([]);
   const [wardsData, setWardsData] = useState<Wards[]>([]);
+
+  const router = useRouter();
+  const logout = useUserStore((state) => state.logout)
+    const handleLogout = () => {
+      logout();
+      router.push("/");
+    };
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -278,8 +288,8 @@ const UserProfileForm: React.FC = () => {
           className="flex flex-col gap-4 bg-neutral-100 p-4 rounded-lg mt-4"
           onSubmit={handleSubmitInfo}
         >
-          <div className="grid grid-cols-2 gap-8">
-            <div className="flex gap-6 items-center mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 sm:items-center mb-2">
               {avatar && (
                 <Image
                   src={avatar}
@@ -317,8 +327,8 @@ const UserProfileForm: React.FC = () => {
               </div>
             </RadioGroup>
           </div>
-          <div className="grid grid-cols-2 gap-8">
-            <div className="flex gap-4 items-baseline">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
+            <div className="flex gap-2 flex-col sm:gap-4 sm:flex-row sm:items-baseline">
               <p className="whitespace-nowrap">Họ & Tên</p>
               <Input
                 className="border rounded-lg"
@@ -326,7 +336,7 @@ const UserProfileForm: React.FC = () => {
                 onChange={(e) => handleChangeName(e)}
               />
             </div>
-            <div className="flex gap-4 items-baseline">
+            <div className="flex gap-2 flex-col sm:gap-4 sm:flex-row sm:items-baseline">
               <p className="whitespace-nowrap">Sinh nhật</p>
               <CalendarCustom date={date} setDate={setDate} />
             </div>
@@ -352,7 +362,7 @@ const UserProfileForm: React.FC = () => {
       <div className="border rounded-lg p-4">
         <p className="text-base font-bold uppercase">Địa chỉ nhận hàng</p>
         <form className="mt-4 " onSubmit={handleSubmitLocation}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Combobox<Provinces>
               selectedItem={locationValue.province}
               data={provinceData}
@@ -390,6 +400,13 @@ const UserProfileForm: React.FC = () => {
           </button>
         </form>
       </div>
+      <button
+          type="button"
+          className="flex md:hidden justify-center mb-4 rounded-lg items-center gap-2  p-2 text-neutral-700 borde font-semibold transition duration-300"
+          onClick={() => handleLogout()}
+        >
+          <CiLogout size={20} /> Đăng xuất
+        </button>
     </div>
   );
 };

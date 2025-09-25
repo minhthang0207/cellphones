@@ -82,9 +82,9 @@ const ResetPasswordForm: React.FC<PaymentDetailProps> = ({ token }) => {
 
   return (
     <div className="bg-blue-100 py-8 h-[calc(100vh-64px)]">
-      <div className="max-w-[1280px] mx-auto">
-        <div className="  flex items-center justify-center">
-          <div className="border rounded-lg flex flex-col gap-4 w-[40%] h-fit p-4 bg-white">
+      <div className="mx-autow-[90%] sm:w-[60%] lg:w-[40%]">
+        <div className="w-full">
+          <div className="border rounded-lg flex flex-col gap-4 w-full h-fit p-4 bg-white">
             <div className="flex justify-between items-center">
               <p className="mb-2 text-2xl">THAY ĐỔI MẬT KHẨU</p>
               <div className="flex items-center gap-4">
