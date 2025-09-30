@@ -67,7 +67,7 @@ Dự án hỗ trợ thanh toán qua **ZaloPay**. Bạn có thể thử nghiệm 
    - Thực hiện thanh toán trên website.
 
 2. **Sử dụng tài khoản ZaloPay đã có sẵn**
-    - Truy cập: [ZaloPay Test Wallets](https://docs.zalopay.vn/vi/docs/developer-tools/test-instructions/test-wallets/)
+    - Truy cập: [ZaloPay Test Wallets](https://docs.zalopay.vn/vi/docs/developer-tools/test-instructions/testing/)
     - Sử dụng các thẻ ngân hàng kiểm thử
 
 > Lưu ý: Môi trường test sẽ không trừ tiền thật, chỉ mô phỏng giao dịch.
