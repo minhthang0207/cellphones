@@ -2694,7 +2694,6 @@ export async function createPayment(
           items,
           totalAmount,
           userId,
-          orderId: "12312321",
         }),
       }
     );

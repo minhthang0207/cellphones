@@ -95,8 +95,11 @@ const CartPage: React.FC = () => {
     if (paymentMethod === "Online") {
       const result = await createPayment(selectedItems, totalAmount, user.id);
       if (result.success) {
-        console.log(result.data);
+        await fetchCart(user.id);
+        console.log(result.data)
         router.push(result.data.order_url);
+      } else {
+        toast.error(result.message);
       }
     } else {
       const result = await createOrder(
