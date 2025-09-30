@@ -29,7 +29,7 @@ Dự án website bán hàng CellphoneS cho phép người dùng mua sắm trực
 - **Frontend**: Next.js + TypeScript, Tailwind CSS, Zustand  
 - **Backend**: Node.js (Express/NestJS)  
 - **Database**: MySQL (railway)
-- **Authentication**: NextAuth / JWT  
+- **Authentication**: JWT  
 - **Triển khai**: Vercel (FE) + Render (BE)   
 
 ---
