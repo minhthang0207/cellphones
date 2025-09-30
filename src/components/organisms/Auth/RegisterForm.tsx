@@ -8,6 +8,7 @@ import { FaTree, FaLightbulb } from "react-icons/fa6";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
 import { signup } from "@/lib";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 const RegisterForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -81,10 +82,13 @@ const RegisterForm: React.FC = () => {
     setIsLoading(true);
     const result = await signup(data);
 
+    console.log(result);
+
     setIsLoading(false);
     if (!result.success) {
       setError(result.message);
     } else {
+      toast.success(result.message);
       return router.push("/login");
     }
   };

@@ -156,7 +156,8 @@ const UserChat = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Có lỗi xảy ra!");
+        setUnreadCount(0);
+        // throw new Error("Có lỗi xảy ra!");
       }
 
       const result = await response.json();
