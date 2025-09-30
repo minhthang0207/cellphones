@@ -54,7 +54,28 @@ npm run dev
 ```
 
 ## 🔗 Backend
-Dự án này cần chạy kèm backend: [CellphoneS Backend](https://github.com/minhthang0207/cellphones_BE)  
+Dự án này cần chạy kèm backend: [CellphoneS Backend](https://github.com/minhthang0207/cellphones_BE)
+
+
+## 💳 Thanh toán online
+
+Dự án hỗ trợ thanh toán qua **ZaloPay**. Bạn có thể thử nghiệm thanh toán bằng các cách sau:
+
+1. **Sử dụng ZaloPay Sandbox**
+   - Truy cập: [ZaloPay Test Wallets](https://docs.zalopay.vn/vi/docs/developer-tools/test-instructions/test-wallets/)
+   - Tải **Zalo Sandbox App** và đăng nhập bằng các tài khoản test được cung cấp trên trang web (hoặc tạo tài khoản cá nhân).
+   - Thực hiện thanh toán trên website.
+
+2. **Sử dụng tài khoản ZaloPay đã có sẵn**
+    - Truy cập: [ZaloPay Test Wallets](https://docs.zalopay.vn/vi/docs/developer-tools/test-instructions/test-wallets/)
+    - Sử dụng các thẻ ngân hàng kiểm thử
+
+> Lưu ý: Môi trường test sẽ không trừ tiền thật, chỉ mô phỏng giao dịch.
+---
+
+## 👤 Tài khoản admin (dùng để đăng nhập và quản lý)
+- Email: `ad@gmail.com`
+- Mật khẩu: `123456`
 
 
 # Giao diện website
