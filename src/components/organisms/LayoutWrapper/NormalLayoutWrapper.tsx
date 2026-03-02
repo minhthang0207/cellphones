@@ -3,14 +3,13 @@
 import { usePathname, useRouter } from "next/navigation";
 import Footer from "../Footer";
 import Header from "../Header";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUserStore } from "@/store/user";
 import { getUser } from "@/lib";
 import useCartStore from "@/store/cart";
 import useWishlistStore from "@/store/wishlist";
 
 const NormalLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
-  const [ready, setReady] = useState(false);
   const user = useUserStore((state) => state.user);
   const fetchCart = useCartStore((state) => state.fetchCart);
   const fetchWishList = useWishlistStore((state) => state.fetchWishList);
@@ -25,21 +24,6 @@ const NormalLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const isAuthPage = pathname === "/login" || pathname === "/register";
 
-
-
-  useEffect(() => {
-    const unsubHydrate = useUserStore.persist.onHydrate(() => setReady(false));
-
-    const unsubFinishHydration = useUserStore.persist.onFinishHydration(() => setReady(true));
-
-    setReady(useUserStore.persist.hasHydrated());
-
-    return () => {
-      unsubHydrate()
-      unsubFinishHydration()
-    };
-    
-  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -58,8 +42,6 @@ const NormalLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    if (!ready) return;
-
     if (Object.keys(user).length > 0 && user && !isAuthPage) {
       if (user.role === "admin") {
         router.push("/dashboard-admin");
@@ -70,7 +52,7 @@ const NormalLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
       fetchUserData();
     }
 
-  }, [user, isAuthPage, addUser, router, fetchCart, fetchWishList, ready]);   
+  }, [user, isAuthPage, addUser, router, fetchCart, fetchWishList]);   
   
   return (
     <div className="w-full h-screen">

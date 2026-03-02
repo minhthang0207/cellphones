@@ -22,7 +22,7 @@ import { LuShieldCheck } from "react-icons/lu";
 import { MdOutlineLocalShipping } from "react-icons/md";
 import { IoLogoApple } from "react-icons/io";
 import Autoplay from "embla-carousel-autoplay";
-import {useRef } from "react";
+import { useRef } from "react";
 import SaleProduct from "./SaleProduct";
 import UserChat from "../Chatbox/Chat";
 import { useUserStore } from "@/store/user";
@@ -30,15 +30,15 @@ import ProductGroup from "./ProductGroup";
 
 import { useLandingProducts } from "@/hooks/useLandingProduct";
 
-
 const DashboardPage: React.FC = () => {
-  const { outstanding, tablets, laptops, phones, isLoading, isError } = useLandingProducts();
-  
+  const { outstanding, tablets, laptops, phones, isLoading, isError } =
+    useLandingProducts();
+
   const user = useUserStore((state) => state.user);
 
   const plugin = useRef(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Autoplay({ delay: 2000, stopOnMouseEnter: true }) as any
+    Autoplay({ delay: 2000, stopOnMouseEnter: true }) as any,
   );
 
   const handleMouseEnter = () => {
@@ -55,15 +55,17 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-[1280px] mx-auto h-fit">
-      <div className="md:grid md:grid-cols-[300px_1fr] my-3 w-full overflow-hidden sm">
+    <div className="max-w-[1280px] mx-auto h-fit bg-[#f5f5f5]">
+      {/*wrapper bọc ngoài */}
+      <div className="md:grid md:grid-cols-[280px_1fr] gap-4 my-4 w-full relative z-10">
         {/* sidebar left */}
         <div className="hidden md:block">
           <Sidebar />
         </div>
+
         {/* carousel */}
-        <div className=" h-[200px] sm:h-[300px] md:h-full border shadow-md rounded-lg overflow-hidden">
-          <Carousel className="w-full h-full ">
+        <div className="h-[200px] sm:h-[300px] md:h-[380px] border shadow-sm rounded-md overflow-hidden bg-white">
+          <Carousel className="w-full h-full">
             <CarouselContent className="-ml-1 h-full">
               {banner.map((item, index) => (
                 <CarouselItem key={index} className="pl-1 h-full">
@@ -72,14 +74,14 @@ const DashboardPage: React.FC = () => {
                       src={item.src}
                       alt="Banner image"
                       fill
-                      style={{ objectFit: "contain" }}
+                      style={{ objectFit: "cover" }} // Đổi contain sang cover nếu banner đã thiết kế chuẩn tỉ lệ
                     />
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="left-4" />
+            <CarouselNext className="right-4" />
           </Carousel>
         </div>
       </div>
@@ -89,7 +91,9 @@ const DashboardPage: React.FC = () => {
         <div className="flex gap-4 w-full sm:w-1/3 items-center sm:justify-center">
           <IoReturnUpBack size={30} className="text-red-700" />
           <div className="flex flex-col gap-1">
-            <span className="text-sm md:text-xl">Trả hàng Miễn phí 15 ngày</span>
+            <span className="text-sm md:text-xl">
+              Trả hàng Miễn phí 15 ngày
+            </span>
             <span className="text-sm text-neutral-500">
               Trả hàng miễn phí trong 15 ngày
             </span>
@@ -120,27 +124,36 @@ const DashboardPage: React.FC = () => {
         <SaleProduct products={outstanding} isLoading={isLoading} />
       </div>
 
-      {/* logo business */}
-      <div className="my-4">
+      {/* Logo Business / Brand Portal */}
+      <div className="my-10 md:my-16 bg-gray-50 border-y border-gray-100 py-8 rounded-3xl shadow-inner overflow-hidden">
+        {/*  Tiêu đề nhỏ*/}
+        <div className="container mx-auto mb-6 px-4">
+          <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider text-center md:text-left">
+            Đối tác thương hiệu chính hãng
+          </h4>
+        </div>
+
         <Carousel
           className="w-full"
           opts={{
             align: "start",
             loop: true,
-            // Tốc độ cuộn
+            dragFree: true,
           }}
           plugins={[plugin.current]}
           onMouseLeave={handleMouseLeave}
           onMouseEnter={handleMouseEnter}
         >
-          <CarouselContent className="-ml-1">
+          <CarouselContent className="-ml-2 md:-ml-4 flex items-center">
             {logos.map((item, index) => (
               <CarouselItem
                 key={index}
-                className="pl-1 basis-1/2 md:basis-1/3 lg:basis-1/5"
+                className="pl-2 md:pl-4 basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/7" // Chỉnh basis nhỏ lại tí cho Desktop hiện nhiều hơn
               >
-                <div className="p-1 flex justify-center items-center text-neutral-400 hover:text-neutral-800 transition duration-150 cursor-pointer">
-                  {item.icon}
+                <div className="group flex h-20 md:h-24 w-full cursor-pointer items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 transition-all duration-300 hover:-translate-y-2 hover:border-[#d70018]/20 hover:shadow-xl hover:shadow-[#d70018]/5">
+                  <div className="text-neutral-400 scale-90 md:scale-100 transition-all duration-300 group-hover:text-[#d70018] group-hover:scale-110 flex items-center justify-center">
+                    {item.icon}
+                  </div>
                 </div>
               </CarouselItem>
             ))}
@@ -149,27 +162,28 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* Grid product phone */}
-      <ProductGroup 
-        label="Điện thoại" 
-        linkAll="/dien-thoai" 
-        isLoading={isLoading}  
+      <ProductGroup
+        label="Điện thoại"
+        linkAll="/dien-thoai"
+        isLoading={isLoading}
         listBrand={phoneBrands}
         product={phones}
+        bannerUrl="https://png.pngtree.com/background/20220714/original/pngtree-flash-sale-40-percent-off-wide-banner-background-picture-image_1608159.jpg"
       />
 
       {/* Grid product laptop */}
-      <ProductGroup 
-        label="Laptop" 
-        linkAll="/laptop" 
+      <ProductGroup
+        label="Laptop"
+        linkAll="/laptop"
         isLoading={isLoading}
         listBrand={laptopBrands}
         product={laptops}
       />
 
       {/* Grid product tablet */}
-      <ProductGroup 
-        label="Máy tính bảng" 
-        linkAll="/may-tinh-bang" 
+      <ProductGroup
+        label="Máy tính bảng"
+        linkAll="/may-tinh-bang"
         isLoading={isLoading}
         listBrand={tabletBrands}
         product={tablets}

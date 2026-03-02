@@ -1,7 +1,14 @@
 import Image from "next/image";
 import { Input } from "../ui/input";
 import { CiSearch } from "react-icons/ci";
-import { FaTimes, FaHome, FaBox, FaChevronDown, FaHeart, FaUserCircle } from "react-icons/fa";
+import {
+  FaTimes,
+  FaHome,
+  FaBox,
+  FaChevronDown,
+  FaHeart,
+  FaUserCircle,
+} from "react-icons/fa";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FaRegUser, FaRegHeart, FaBars } from "react-icons/fa";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,10 +30,13 @@ const Header: React.FC = () => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [openProducts, setOpenProducts] = useState(false);
   const [searchName, setSearchName] = useState("");
-  const [isListVisible, setIsListVisible] = useState(false); // Trạng thái hiển thị danh sách
-  const searchRef = useRef<HTMLDivElement | null>(null); // Tham chiếu đến container tìm kiếm
-  const [isLoading, setIsLoading] = useState(false); // Trạng thái hiển thị danh sách
+  const [isListVisible, setIsListVisible] = useState(false);
+  const searchRef = useRef<HTMLDivElement | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [listSearchProduct, setListSearchProduct] = useState<Product[]>([]);
+
+  // 1. THÊM STATE ĐỂ BẮT SỰ KIỆN CUỘN TRANG
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const router = useRouter();
   const handleToUserPage = () => {
@@ -36,7 +46,7 @@ const Header: React.FC = () => {
   const handleMobileClick = (href: string) => {
     setOpenSidebar(false);
     router.push(href);
-  }
+  };
 
   const handleChangeSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -45,17 +55,21 @@ const Header: React.FC = () => {
   };
 
   const handleClickOutside = (e: MouseEvent) => {
-    // Nếu click bên ngoài thành phần
     if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-      setIsListVisible(false); // Ẩn danh sách
+      setIsListVisible(false);
     }
   };
 
+  // 2. LẮNG NGHE SỰ KIỆN CUỘN
   useEffect(() => {
-    // Thêm sự kiện khi component được mount
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20); // Nếu cuộn quá 20px thì bật hiệu ứng
+    };
+    window.addEventListener("scroll", handleScroll);
     document.addEventListener("click", handleClickOutside);
+
     return () => {
-      // Dọn dẹp sự kiện khi component bị unmount
+      window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
@@ -65,7 +79,7 @@ const Header: React.FC = () => {
       setIsLoading(true);
 
       const timer = setTimeout(async () => {
-        const result = await getProductByName(searchName); // Gọi API hoặc logic cập nhật giỏ hàng
+        const result = await getProductByName(searchName);
         if (result.success) {
           setListSearchProduct(result.data.products);
         } else {
@@ -78,38 +92,56 @@ const Header: React.FC = () => {
         clearTimeout(timer);
       };
     }
-  }, [searchName]); // Thêm dependency item.id và updateCart
+  }, [searchName]);
 
   return (
-    <div className="flex flex-col justify-center items-center bg-primary-main sticky top-0 z-50">
-      <div className="h-[64px] w-full max-w-screen-xl grid grid-cols-[1fr_2fr_1fr] md:grid-cols-[300px_1fr_auto] items-centers justify-between px-4 xl:px-0 ">
-        <button className="flex md:hidden items-center text-white cursor-pointer"
+    <div
+      className={`flex flex-col justify-center items-center sticky top-0 z-[100] w-full transition-all duration-300 ${
+        isScrolled
+          ? "bg-[#d70018]/95 backdrop-blur-md shadow-md"
+          : "bg-[#d70018]"
+      }`}
+    >
+      {/* 1. WRAPPER */}
+      <div
+        className={`w-full max-w-screen-xl flex items-center justify-between px-4 xl:px-0 transition-all duration-300 gap-4 lg:gap-8 ${
+          isScrolled ? "h-[56px]" : "h-[64px]"
+        }`}
+      >
+        {/* Nút Menu Mobile */}
+        <button
+          className="flex md:hidden items-center text-white cursor-pointer shrink-0"
           onClick={() => setOpenSidebar(true)}
         >
           <FaBars size={20} />
         </button>
-        <Link href="/" className="flex items-center md:w-[300px] justify-center w-full">
+
+        {/* 2. LOGO*/}
+        <Link href="/" className="flex items-center shrink-0">
           <Image
             src="/logo.png"
-            width={180}
-            height={30}
+            width={200}
+            height={40}
             alt="logo cellphoneS"
-            style={{
-              width: "auto",
-              height: "auto",
-            }}
+            className={`transition-all duration-300 object-contain w-auto ${isScrolled ? "h-[28px] md:h-[30px]" : "h-[32px] md:h-[36px]"}`}
           />
         </Link>
-        {/* search */}
+
+        {/* 3. SEARCH (Desktop) */}
         <div
-          className="relative z-50 hidden md:flex items-center ml-3 mr-6"
+          className="relative z-50 hidden md:flex items-center flex-1 group"
           ref={searchRef}
         >
           <Input
             value={searchName}
             placeholder="Tìm kiếm sản phẩm"
-            icon={<CiSearch size={24} />}
-            className=""
+            icon={
+              <CiSearch
+                size={24}
+                className="text-gray-500 group-hover:text-[#d70018] transition-colors"
+              />
+            }
+            className="shadow-inner w-full m-0"
             onChange={(e) => handleChangeSearchInput(e)}
           />
           {isListVisible && (
@@ -119,35 +151,37 @@ const Header: React.FC = () => {
             />
           )}
         </div>
-        <div className="flex justify-end md:gap-2 md:ml-4 ">
-          {/* <div className="hidden md:flex gap-2 items-center px-2 my-2 rounded-md transition duration-300 hover:bg-primary-500 text-white text-base cursor-pointer">
-            <MdOutlineLocalShipping size={24} />
-            <span className="text-xs">
-              Tra cứu <br /> đơn hàng
-            </span>
-          </div> */}
 
+        {/* 4. NHÓM NÚT (User, Cart, Wishlist) */}
+        <div className="flex items-center justify-end md:gap-2 shrink-0 h-full">
           <Link
             href="/gio-hang"
-            className="flex items-center relative px-4 md:px-2 my-2 md:my-2 rounded-md transition duration-300 hover:bg-primary-500 text-white text-base"
+            className="flex flex-col items-center justify-center relative px-3 py-1.5 rounded-lg transition-all duration-300 hover:bg-white/20 text-white"
           >
-            <div className="relative cursor-pointer">
-              <IoCartOutline size={24} />
+            <div className="relative flex flex-col items-center">
+              <IoCartOutline size={22} className="mb-0.5" />
+              <span className="text-[10px] hidden md:block font-medium leading-none mt-1">
+                Giỏ hàng
+              </span>
               {Object.keys(user).length > 0 && (
-                <span className="absolute flex justify-center items-center top-[-6px] right-[-10px] w-4 h-4 rounded-full bg-white text-primary-main text-[10px]">
+                <span className="absolute flex justify-center items-center top-[-8px] right-[-8px] w-4 h-4 rounded-full bg-white text-[#d70018] text-[10px] font-bold shadow-sm">
                   {cart.length}
                 </span>
               )}
             </div>
           </Link>
+
           <Link
             href="/yeu-thich"
-            className="hidden sm:flex items-center relative px-4 md:px-2 my-2 rounded-md transition duration-300 hover:bg-primary-500 text-white text-base"
+            className="hidden sm:flex flex-col items-center justify-center relative px-3 py-1.5 rounded-lg transition-all duration-300 hover:bg-white/20 text-white"
           >
-            <div className="relative cursor-pointer">
-              <FaRegHeart size={20} />
+            <div className="relative flex flex-col items-center">
+              <FaRegHeart size={18} className="mb-0.5" />
+              <span className="text-[10px] hidden md:block font-medium leading-none mt-1.5">
+                Yêu thích
+              </span>
               {Object.keys(user).length > 0 && (
-                <span className="absolute flex justify-center items-center top-[-6px] right-[-10px] w-4 h-4 rounded-full bg-white text-primary-main text-[10px]">
+                <span className="absolute flex justify-center items-center top-[-8px] right-[-8px] w-4 h-4 rounded-full bg-white text-[#d70018] text-[10px] font-bold shadow-sm">
                   {wishlist.length}
                 </span>
               )}
@@ -157,46 +191,44 @@ const Header: React.FC = () => {
           {Object.keys(user).length > 0 ? (
             <button
               type="button"
-              className="items-center justify-center ml-2 hidden sm:flex "
+              className="flex items-center justify-center ml-2 hidden sm:flex hover:scale-105 transition-transform"
               onClick={() => handleToUserPage()}
             >
-              <Avatar>
+              <Avatar className="border border-white/30 h-8 w-8">
                 <AvatarImage src={user.avatar} className="object-cover" />
-                {/* "https://github.com/shadcn.png" */}
                 <AvatarFallback></AvatarFallback>
               </Avatar>
             </button>
           ) : (
             <Link
               href="/login"
-              className="hidden md:flex gap-2 items-center px-2 my-2 rounded-md transition duration-300 hover:bg-primary-500 text-white text-base cursor-pointer"
+              className="hidden md:flex gap-2 items-center px-3 py-2 ml-2 rounded-lg transition-all duration-300 bg-white/10 hover:bg-white/20 text-white border border-white/20"
             >
-              <FaRegUser />
-              <span className="text-xs">Đăng nhập</span>
+              <FaRegUser size={16} />
+              <span className="text-xs font-semibold whitespace-nowrap">
+                Đăng nhập
+              </span>
             </Link>
           )}
         </div>
       </div>
+
+      {/* Search Mobile */}
       <div
-          className="md:hidden flex items-center w-full px-3 py-2"
-          ref={searchRef}
-        >
-          <Input
-            value={searchName}
-            placeholder="Tìm kiếm sản phẩm"
-            icon={<CiSearch size={24} />}
-            className=""
-            onChange={(e) => handleChangeSearchInput(e)}
-          />
-          {isListVisible && (
-            <ListProductSearch
-              products={listSearchProduct}
-              isLoading={isLoading}
-            />
-          )}
+        className={`md:hidden flex items-center w-full px-3 transition-all duration-300 ${
+          isScrolled ? "pb-2 pt-0 h-[48px]" : "py-2 h-[56px]"
+        }`}
+      >
+        <Input
+          value={searchName}
+          placeholder="Tìm kiếm sản phẩm"
+          icon={<CiSearch size={24} />}
+          className="shadow-inner"
+          onChange={(e) => handleChangeSearchInput(e)}
+        />
       </div>
 
-      {/* Overlay */}
+      {/* SIDEBAR MOBILE */}
       <div
         onClick={() => setOpenSidebar(false)}
         className={`fixed inset-0 bg-black/50 transition-opacity duration-300 ${
@@ -204,32 +236,35 @@ const Header: React.FC = () => {
         }`}
       />
 
-      {/* Sidebar */}
-      
       <div
-        className={`fixed py-4 px-4 transition-transform transfrom duration-300 top-0 left-0 w-[100%] sm:w-[70%] h-full z-50 bg-white ${openSidebar ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed py-4 px-4 transition-transform transfrom duration-300 top-0 left-0 w-[100%] sm:w-[70%] h-full z-50 bg-white shadow-2xl ${openSidebar ? "translate-x-0" : "-translate-x-full"}`}
       >
-        {/* Close button */}
-        <div className="absolute top-4 right-4" onClick={() => setOpenSidebar(false)}>
-          <FaTimes size={24} className="opacity-60 hover:opacity-80 transform transition duration-100 cursor-pointer" />
+        <div
+          className="absolute top-4 right-4"
+          onClick={() => setOpenSidebar(false)}
+        >
+          <FaTimes
+            size={24}
+            className="opacity-60 hover:opacity-80 transform transition duration-100 cursor-pointer"
+          />
         </div>
 
-        <Image src="/logo_small.jpg" alt="Logo" width={50} height={50}/>
+        <Image src="/logo_small.jpg" alt="Logo" width={50} height={50} />
 
-        {/* Menu */}
         <ul className="px-4 py-6 space-y-2 text-gray-700">
-          {/* Home */}
-          <li className="flex items-center gap-3 rounded-md hover:bg-gray-100 cursor-pointer">
-            <div className="flex items-center gap-3 p-2 w-full" onClick={() => handleMobileClick("/")}>
+          <li className="flex items-center gap-3 rounded-md hover:bg-red-50 hover:text-[#d70018] transition-colors cursor-pointer">
+            <div
+              className="flex items-center gap-3 p-2 w-full"
+              onClick={() => handleMobileClick("/")}
+            >
               <FaHome /> <span>Trang chủ</span>
             </div>
           </li>
 
-          {/* Products + Submenu */}
-          <li className="rounded-md hover:bg-gray-100 cursor-pointer">
+          <li className="rounded-md hover:bg-gray-50 cursor-pointer">
             <button
               onClick={() => setOpenProducts(!openProducts)}
-              className="flex items-center justify-between w-full h-full p-2"
+              className="flex items-center justify-between w-full h-full p-2 hover:text-[#d70018] transition-colors"
             >
               <span className="flex items-center gap-3">
                 <FaBox /> Danh mục sản phẩm
@@ -241,59 +276,68 @@ const Header: React.FC = () => {
               />
             </button>
 
-            {/* Submenu */}
             <ul
               className={`ml-8 space-y-2 text-gray-600 text-sm transition-all duration-300 overflow-hidden ${
-                openProducts ? "max-h-40" : "max-h-0"
+                openProducts ? "max-h-40 mt-2" : "max-h-0"
               }`}
             >
-              
-              <li className="hover:bg-gray-100 rounded-md cursor-pointer">
-                <div onClick={() => handleMobileClick("/laptop")} className="flex items-center gap-3 w-full p-2">
+              <li className="hover:bg-red-50 hover:text-[#d70018] rounded-md cursor-pointer transition-colors">
+                <div
+                  onClick={() => handleMobileClick("/laptop")}
+                  className="flex items-center gap-3 w-full p-2"
+                >
                   💻 Máy tính
                 </div>
               </li>
-              <li className="hover:bg-gray-100 rounded-md cursor-pointer">
-                <div onClick={() => handleMobileClick("/dien-thoai")} className="flex items-center gap-3 w-full p-2">
+              <li className="hover:bg-red-50 hover:text-[#d70018] rounded-md cursor-pointer transition-colors">
+                <div
+                  onClick={() => handleMobileClick("/dien-thoai")}
+                  className="flex items-center gap-3 w-full p-2"
+                >
                   📱 Điện thoại
                 </div>
               </li>
-              <li className="hover:bg-gray-100 rounded-md cursor-pointer">
-                <div onClick={() => handleMobileClick("/may-tinh-bang")} className="flex items-center gap-3 w-full p-2">
+              <li className="hover:bg-red-50 hover:text-[#d70018] rounded-md cursor-pointer transition-colors">
+                <div
+                  onClick={() => handleMobileClick("/may-tinh-bang")}
+                  className="flex items-center gap-3 w-full p-2"
+                >
                   📟 Máy tính bảng
                 </div>
               </li>
             </ul>
           </li>
 
-          {/* Yêu thích */}
-          <li className="flex items-center gap-3 rounded-md hover:bg-gray-100 cursor-pointer">
-            <div className="flex items-center gap-3 w-full h-full p-2" onClick={() => handleMobileClick("/yeu-thich")}>
+          <li className="flex items-center gap-3 rounded-md hover:bg-red-50 hover:text-[#d70018] transition-colors cursor-pointer">
+            <div
+              className="flex items-center gap-3 w-full h-full p-2"
+              onClick={() => handleMobileClick("/yeu-thich")}
+            >
               <FaHeart /> <span>Yêu thích</span>
             </div>
           </li>
 
-          {/* Acccount */}
-          <li className="flex items-center gap-3 rounded-md hover:bg-gray-100 cursor-pointer">
-            <div className="flex items-center gap-3 w-full h-full p-2"
+          <li className="flex items-center gap-3 rounded-md hover:bg-red-50 hover:text-[#d70018] transition-colors cursor-pointer">
+            <div
+              className="flex items-center gap-3 w-full h-full p-2"
               onClick={() => {
-                if(Object.keys(user).length === 0) {
+                if (Object.keys(user).length === 0) {
                   setOpenSidebar(false);
-                  const redirectUrl = encodeURIComponent("/lich-su-mua-hang/thong-tin-nguoi-dung");
+                  const redirectUrl = encodeURIComponent(
+                    "/lich-su-mua-hang/thong-tin-nguoi-dung",
+                  );
                   router.push(`/login?redirect=${redirectUrl}`);
                   return;
                 }
-                handleMobileClick("/lich-su-mua-hang")
-              }}>
+                handleMobileClick("/lich-su-mua-hang");
+              }}
+            >
               <FaUserCircle /> <span>Tài khoản</span>
             </div>
           </li>
         </ul>
       </div>
-      
-      
     </div>
-    
   );
 };
 

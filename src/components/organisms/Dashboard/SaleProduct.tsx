@@ -1,5 +1,5 @@
 import CardProduct from "@/components/ui/cardProduct";
-import { FaFireAlt } from "react-icons/fa";
+import { FaFireAlt, FaChevronRight } from "react-icons/fa"; // Import thêm icon
 import {
   Carousel,
   CarouselContent,
@@ -9,6 +9,7 @@ import {
 } from "../../ui/carousel";
 import { useEffect, useState } from "react";
 import Loading from "../Loading";
+import Link from "next/link"; // Import Link
 
 interface OutStandingProductProps {
   products: Product[];
@@ -41,47 +42,69 @@ const OutStandingProduct: React.FC<OutStandingProductProps> = ({
     }
   };
   const itemsPerPage = getItemsToShow();
+
   return (
-    <div className="bg-red-400 rounded-lg p-4">
-      <div className="flex items-center justify-between py-3">
-        <h3 className="text-3xl uppercase text-white font-bold ">
-          Sản phẩm nổi bật
-        </h3>
-        <div className="flex gap-3 items-center text-white">
-          <span>
-            <FaFireAlt size={20} />
-          </span>
-          <span>
-            <FaFireAlt size={20} />
-          </span>
-          <span>
-            <FaFireAlt size={20} />
-          </span>
+    // 1. ÁP DỤNG NỀN GRADIENT (Từ đỏ rực -> Đỏ nhạt -> Trắng)
+    <div className="w-full bg-gradient-to-b from-[#d70018] via-red-50 to-white rounded-2xl p-4 md:p-6 shadow-sm border border-red-100 mt-8">
+      {/* 2. HEADER MỚI: Sang trọng và tạo cảm giác Flash Sale */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+        <div className="flex items-center gap-4">
+          <h3 className="text-2xl md:text-3xl font-black text-white italic uppercase tracking-wider drop-shadow-md flex items-center gap-2">
+            <FaFireAlt className="text-yellow-300" /> SẢN PHẨM NỔI BẬT
+          </h3>
+
+          {/* Đồng hồ đếm ngược (Giả lập) */}
+          <div className="hidden sm:flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/30">
+            <span className="text-sm font-medium text-white">
+              Kết thúc trong:
+            </span>
+            <div className="flex gap-1 text-sm font-bold">
+              <span className="bg-black text-white px-2 py-0.5 rounded-md shadow">
+                02
+              </span>
+              <span className="text-white">:</span>
+              <span className="bg-black text-white px-2 py-0.5 rounded-md shadow">
+                15
+              </span>
+              <span className="text-white">:</span>
+              <span className="bg-black text-white px-2 py-0.5 rounded-md shadow">
+                45
+              </span>
+            </div>
+          </div>
         </div>
+
+        {/* Nút Xem tất cả */}
+        <Link
+          href="/san-pham-hot"
+          className="text-white bg-white/20 hover:bg-white hover:text-[#d70018] transition-all duration-300 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 w-fit"
+        >
+          Xem tất cả <FaChevronRight size={12} />
+        </Link>
       </div>
+
+      {/* 3. KHU VỰC SẢN PHẨM */}
       {isLoading ? (
-        <div className="bg-white rounded-lg h-[400px]">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl h-[400px] flex items-center justify-center">
           <Loading fullWeb={false} />
         </div>
       ) : (
         <Carousel
-          className="w-full"
+          className="w-full relative"
           opts={{
-            // align: "start",
             loop: false,
           }}
         >
-          <CarouselContent>
-            {/* Loop qua các sản phẩm và chia theo page */}
+          <CarouselContent className="-ml-2 md:-ml-4 py-4">
             {Array.from({
               length: Math.ceil(products.length / itemsPerPage),
             }).map((_, pageIndex) => (
-              <CarouselItem key={pageIndex}>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <CarouselItem key={pageIndex} className="pl-2 md:pl-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
                   {products
                     .slice(
                       pageIndex * itemsPerPage,
-                      (pageIndex + 1) * itemsPerPage
+                      (pageIndex + 1) * itemsPerPage,
                     )
                     .map((item, index) => (
                       <CardProduct product={item} key={index} />
@@ -90,206 +113,14 @@ const OutStandingProduct: React.FC<OutStandingProductProps> = ({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+
+          {/* điều hướng */}
+          <CarouselPrevious className="absolute left-0 md:-left-5 bg-white border-gray-200 shadow-md hover:bg-gray-50 text-gray-700" />
+          <CarouselNext className="absolute right-0 md:-right-5 bg-white border-gray-200 shadow-md hover:bg-gray-50 text-gray-700" />
         </Carousel>
       )}
     </div>
   );
 };
 
-//  <CardProduct product={item} />;
-
 export default OutStandingProduct;
-
-// const products = [
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_5.jpg",
-//     name: "Điện thoại Xiaomi Redmi Note 13 Pro Điện thoại Xiaomi Redmi Note 13 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_6.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Camera IP 360 Độ 4MP EZVIZ H6C Pro",
-//     price: 630000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_2.jpg",
-//     name: "Laptop Apple MacBook Air",
-//     price: 63000000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_3.jpg",
-//     name: "Đồng hồ thông minh BeFit Hunter2",
-//     price: 2300000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_1.jpg",
-//     name: "Laptop Asus Vivobook 15",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-//   {
-//     img: "/product_4.jpg",
-//     name: "Điện thoại OPPO Reno10 Pro",
-//     price: 1220000,
-//     star: 4,
-//     num_review: 10,
-//     category_slug: "maytinh",
-//     product_slug: "maytinh1",
-//   },
-// ];

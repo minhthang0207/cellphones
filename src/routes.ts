@@ -17,7 +17,7 @@
  * @type {string[]}
  */
 // only for logout user
-export const authRoutes = [
+export const AUTH_ROUTES = [
     "/login",
     "/register",
     "/forgot-password",
@@ -27,13 +27,13 @@ export const authRoutes = [
 
 /**
  * The default redirect path after logging in (user)
- * @type {string}
+ * @type {array}
  */
-export const DEFAULT_LOGIN_USER_REDIRECT = "/"
+export const USER_PROTECTED = ["/lich-su-mua-hang"]
 
 
 /**
  * The default redirect path after logging in (admin)
- * @type {string}
+ * @type {array}
  */
-export const DEFAULT_LOGIN_ADMIN_REDIRECT = "/dashboard-admin"
+export const ADMIN_PROTECTED = ["/dashboard-admin"];
